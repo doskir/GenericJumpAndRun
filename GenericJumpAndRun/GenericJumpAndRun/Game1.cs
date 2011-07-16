@@ -124,7 +124,7 @@ namespace GenericJumpAndRun
             _oldState = newState;
 
             player.Update(currentLevel);
-            player.Fall(currentLevel);
+            
 
 
             base.Update(gameTime);
