@@ -19,9 +19,10 @@ namespace GenericJumpAndRun
         public string ToLevelString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach(GameObject gobj in GameObjects)
+            foreach (GameObject gobj in GameObjects)
             {
-                sb.AppendLine(gobj.BoundingRectangle.X + "," + gobj.BoundingRectangle.Y + "," + gobj.Sprite.Name);
+                if (gobj.Type == GameObject.ObjectType.Block)
+                    sb.AppendLine(gobj.BoundingRectangle.X + "," + gobj.BoundingRectangle.Y + "," + gobj.Sprite.Name);
             }
             return sb.ToString();
         }

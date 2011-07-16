@@ -9,6 +9,12 @@ namespace GenericJumpAndRun
 {
     class GameObject
     {
+        public enum ObjectType
+        {
+            Block,
+            Player,
+            Enemy
+        }
         public Vector2 Position
         {
             get { return _position; }
@@ -31,7 +37,8 @@ namespace GenericJumpAndRun
         public Vector2 Velocity;
         public Texture2D Sprite;
         public BoundingRectangle BoundingRectangle;
-        public GameObject(Vector2 position,Vector2 velocity,Texture2D sprite)
+        public ObjectType Type;
+        public GameObject(Vector2 position,Vector2 velocity,Texture2D sprite,ObjectType objectType)
         {
             _position = position;
             Velocity = velocity;
@@ -58,6 +65,10 @@ namespace GenericJumpAndRun
                     return true;
             }
             return false;
+        }
+        public virtual void Update(Level currentLevel)
+        {
+            
         }
     }
 }

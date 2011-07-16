@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Enemy.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="LogWindow.cs">
@@ -120,6 +121,7 @@
     <Compile Include="LogWindow.Designer.cs">
       <DependentUpon>LogWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="MovingObject.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

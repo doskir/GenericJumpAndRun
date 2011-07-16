@@ -28,7 +28,8 @@ namespace GenericJumpAndRun
         private Level currentLevel;
         private Player player;
         private Camera camera;
-        private List<Texture2D> blocks; 
+        private List<Texture2D> blocks;
+        private Texture2D enemyTexture;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -69,7 +70,7 @@ namespace GenericJumpAndRun
                     Texture2D sprite = Content.Load<Texture2D>(split[2]);
                     sprite.Name = split[2];
                     GameObject gameObject = new GameObject(new Vector2(float.Parse(split[0]), float.Parse(split[1])),
-                                                           new Vector2(0, 0), sprite);
+                                                           new Vector2(0, 0), sprite,GameObject.ObjectType.Block);
                     level.GameObjects.Add(gameObject);
                 }
             }
@@ -88,7 +89,8 @@ namespace GenericJumpAndRun
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            currentLevel = LoadLevelFromFile("leveldata.txt");
+            camera = new Camera(0, 0, 640, 480);
 
             base.Initialize();
         }
@@ -110,18 +112,16 @@ namespace GenericJumpAndRun
             blocks.Add(Content.Load<Texture2D>("stoneblock"));
             blocks.Last().Name = "stoneblock";
 
+            enemyTexture = Content.Load<Texture2D>("enemy");
+            enemyTexture.Name = "enemy";
 
             heroTexture = Content.Load<Texture2D>("hero");
             heroTexture.Name = "hero";
-
-
-
-            currentLevel = LoadLevelFromFile("leveldata.txt");
             player = new Player(new Vector2(32, 64), new Vector2(0,5), heroTexture);
+
             currentLevel.GameObjects.Add(player);
-            camera = new Camera(0, 0, 640, 480);
             camera.LockToObject(player);
-            // TODO: use this.Content to load your game content here
+
         }
 
         /// <summary>
@@ -165,8 +165,10 @@ namespace GenericJumpAndRun
             }
             if(newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
             {
-                int x = (int) newMouseState.X/32*32;
-                int y = (int) newMouseState.Y/32*32;
+                int x = (int) (newMouseState.X + camera.Position.X)/32*32;
+                int y = (int) (newMouseState.Y + camera.Position.Y)/32*32;
+                if (x <= 0)
+                    x -= 32;
                 GameObject block = null;
                 try
                 {
@@ -191,8 +193,29 @@ namespace GenericJumpAndRun
                 }
                 else
                 {
-                    block = new GameObject(new Vector2(x,y),Vector2.Zero, blocks[0]);
+                    block = new GameObject(new Vector2(x,y),Vector2.Zero, blocks[0],GameObject.ObjectType.Block);
                     currentLevel.GameObjects.Add(block);
+                }
+            }
+            if (newMouseState.RightButton == ButtonState.Pressed && _oldMouseState.RightButton == ButtonState.Released)
+            {
+                int x = (int) (newMouseState.X + camera.Position.X)/32*32;
+                int y = (int) (newMouseState.Y + camera.Position.Y)/32*32;
+                if (x <= 0)
+                    x -= 32;
+                GameObject block = null;
+                try
+                {
+                    block =
+                        currentLevel.GameObjects.Where(
+                            gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y).Single();
+                }
+                catch (Exception)
+                {}
+
+                if (block == null)
+                {
+                    currentLevel.GameObjects.Add(new Enemy(new Vector2(x, y), Vector2.Zero, enemyTexture));
                 }
             }
             _oldMouseState = newMouseState;
@@ -217,7 +240,7 @@ namespace GenericJumpAndRun
                     newPos.Y -= 2;
                     player.Position = newPos;
                 }
-                if(newKeyboardState.IsKeyDown(Keys.Down))
+                if (newKeyboardState.IsKeyDown(Keys.Down))
                 {
                     Vector2 newPos = player.Position;
                     newPos.Y += 2;
@@ -228,19 +251,24 @@ namespace GenericJumpAndRun
             {
 #endif
 
-            if (newKeyboardState.IsKeyDown(Keys.Left))
-            {
-                player.Move(Player.Direction.Left);
-            }
-            else if (newKeyboardState.IsKeyDown(Keys.Right))
-            {
-                player.Move(Player.Direction.Right);
-            }
-            if (newKeyboardState.IsKeyDown(Keys.Up))
-            {
-                player.Jump();
-            }
-            player.Update(currentLevel);
+                if (newKeyboardState.IsKeyDown(Keys.Left))
+                {
+                    player.Move(Player.Direction.Left);
+                }
+                else if (newKeyboardState.IsKeyDown(Keys.Right))
+                {
+                    player.Move(Player.Direction.Right);
+                }
+                if (newKeyboardState.IsKeyDown(Keys.Up))
+                {
+                    player.Jump();
+                }
+                foreach(GameObject gobj in currentLevel.GameObjects)
+                {
+                    gobj.Update(currentLevel);
+                }
+
+
 #if DEBUG
             }
 #endif
