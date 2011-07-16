@@ -64,7 +64,7 @@ namespace GenericJumpAndRun
         public void Fall(Level level)
         {            //gravity
             Vector2 originalPosition = Position;
-            Velocity.Y += 0.1f;
+            Velocity.Y += 0.2f;
             Vector2 verticalVelocity = new Vector2(0, Velocity.Y);
             Position += verticalVelocity;
             if(IntersectsWithAny(level.GameObjects))
