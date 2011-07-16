@@ -19,9 +19,15 @@ namespace GenericJumpAndRun
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+
+        //the sprites will be 32x32
+        //the screen will be 20 tiles wide and 15 tiles high
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            graphics.PreferredBackBufferWidth = 640;
+            graphics.PreferredBackBufferHeight = 480;
             Content.RootDirectory = "Content";
         }
 
@@ -38,6 +44,7 @@ namespace GenericJumpAndRun
             base.Initialize();
         }
 
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -46,7 +53,6 @@ namespace GenericJumpAndRun
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
             // TODO: use this.Content to load your game content here
         }
 
