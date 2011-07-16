@@ -44,6 +44,8 @@ namespace GenericJumpAndRun
                     _viewport.X = (int) _focusObject.Position.X - _viewport.Width/2;
                 }
             }
+            if (_viewport.X < 0)
+                _viewport.X = 0;
         }
 
         public bool Visible(GameObject gobj)
