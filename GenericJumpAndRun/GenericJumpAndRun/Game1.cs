@@ -27,6 +27,7 @@ namespace GenericJumpAndRun
         private Texture2D heroTexture;
         private Level currentLevel;
         private Player player;
+        private Camera camera;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -83,6 +84,8 @@ namespace GenericJumpAndRun
             currentLevel = LoadLevelFromFile("leveldata.txt");
             player = new Player(new Vector2(32, 64), new Vector2(0,5), heroTexture);
             currentLevel.GameObjects.Add(player);
+            camera = new Camera(0, 0, 640, 480);
+            camera.LockToObject(player);
             // TODO: use this.Content to load your game content here
         }
 
@@ -124,6 +127,7 @@ namespace GenericJumpAndRun
             _oldState = newState;
 
             player.Update(currentLevel);
+            camera.Update();
             
 
 
@@ -136,24 +140,21 @@ namespace GenericJumpAndRun
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        
-
-        private Vector2 cameraPosition = new Vector2(0, 0);
         protected override void Draw(GameTime gameTime)
         {
-            Vector2 minPosition = cameraPosition + new  Vector2(-50, -50);
-            Vector2 maxPosition = cameraPosition + new Vector2(690, 530);
+            Vector2 minPosition = camera.Position+ new  Vector2(-50, -50);
+            Vector2 maxPosition = camera.Position+ new Vector2(690, 530);
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             foreach (GameObject gobj in currentLevel.GameObjects)
             {
-                Vector2 actualPosition = gobj.Position + cameraPosition;
-                if (actualPosition.X < minPosition.X || actualPosition.Y < minPosition.X
-                    || actualPosition.X > maxPosition.X || actualPosition.Y > maxPosition.Y)
-                {
-                    continue;
-                }
-                spriteBatch.Draw(gobj.Sprite, actualPosition, Color.White);
+                Vector2 actualPosition = gobj.Position - camera.Position;
+                //if (actualPosition.X < minPosition.X || actualPosition.Y < minPosition.X
+                 //   || actualPosition.X > maxPosition.X || actualPosition.Y > maxPosition.Y)
+                //{
+                 //   continue;
+                //}
+                spriteBatch.Draw(gobj.Sprite,actualPosition, Color.White);
 
             }
             spriteBatch.End();
