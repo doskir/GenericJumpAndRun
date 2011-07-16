@@ -153,9 +153,13 @@ namespace GenericJumpAndRun
                 catch (InvalidOperationException)
                 {
                 }
-
+                if (assetName == "air")
+                {
+                    currentLevel.GameObjects.Add(new GameObject(new Vector2(x, y), Vector2.Zero,
+                                                                Content.Load<Texture2D>("dirt")));
+                }
                 logWindow.AddMessage(x + "," + y + "," + assetName);
-                Console.WriteLine("{0},{1},dirt", x, y);
+                Console.WriteLine("{0},{1},{2}", x, y, assetName);
             }
             if(_oldState.IsKeyUp(Keys.N) && newState.IsKeyDown(Keys.N))
             {
