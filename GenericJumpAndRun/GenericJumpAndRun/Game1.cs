@@ -118,7 +118,8 @@ namespace GenericJumpAndRun
             // TODO: Unload any non ContentManager content here
         }
 
-        private KeyboardState _oldState = Keyboard.GetState();
+        private KeyboardState _oldKeyboardState = Keyboard.GetState();
+
 #if DEBUG
         private LogWindow logWindow;
         private bool noclip;
@@ -135,10 +136,10 @@ namespace GenericJumpAndRun
                 this.Exit();
 
             // TODO: Add your update logic here
-            KeyboardState newState = Keyboard.GetState();
+            KeyboardState newKeyboardState = Keyboard.GetState();
 
 #if DEBUG
-            if (_oldState.IsKeyUp(Keys.Space) && newState.IsKeyDown(Keys.Space))
+            if (_oldKeyboardState.IsKeyUp(Keys.Space) && newKeyboardState.IsKeyDown(Keys.Space))
             {
                 int x = (int) player.Position.X/32*32;
                 int y = (int) player.Position.Y/32*32;
@@ -161,32 +162,34 @@ namespace GenericJumpAndRun
                 logWindow.AddMessage(x + "," + y + "," + assetName);
                 Console.WriteLine("{0},{1},{2}", x, y, assetName);
             }
-            if(_oldState.IsKeyUp(Keys.N) && newState.IsKeyDown(Keys.N))
+            if(_oldKeyboardState.IsKeyUp(Keys.N) && newKeyboardState.IsKeyDown(Keys.N))
             {
                 noclip = !noclip;
+                camera.LockToPlayingArea = !camera.LockToPlayingArea;
             }
+    
 
             if (noclip)
             {
-                if (newState.IsKeyDown(Keys.Left))
+                if (newKeyboardState.IsKeyDown(Keys.Left))
                 {
                     Vector2 newPos = player.Position;
                     newPos.X -= 2;
                     player.Position = newPos;
                 }
-                else if (newState.IsKeyDown(Keys.Right))
+                else if (newKeyboardState.IsKeyDown(Keys.Right))
                 {
                     Vector2 newPos = player.Position;
                     newPos.X += 2;
                     player.Position = newPos;
                 }
-                if (newState.IsKeyDown(Keys.Up))
+                if (newKeyboardState.IsKeyDown(Keys.Up))
                 {
                     Vector2 newPos = player.Position;
                     newPos.Y -= 2;
                     player.Position = newPos;
                 }
-                if(newState.IsKeyDown(Keys.Down))
+                if(newKeyboardState.IsKeyDown(Keys.Down))
                 {
                     Vector2 newPos = player.Position;
                     newPos.Y += 2;
@@ -197,15 +200,15 @@ namespace GenericJumpAndRun
             {
 #endif
 
-            if (newState.IsKeyDown(Keys.Left))
+            if (newKeyboardState.IsKeyDown(Keys.Left))
             {
                 player.Move(Player.Direction.Left);
             }
-            else if (newState.IsKeyDown(Keys.Right))
+            else if (newKeyboardState.IsKeyDown(Keys.Right))
             {
                 player.Move(Player.Direction.Right);
             }
-            if (newState.IsKeyDown(Keys.Up))
+            if (newKeyboardState.IsKeyDown(Keys.Up))
             {
                 player.Jump();
             }
@@ -215,7 +218,7 @@ namespace GenericJumpAndRun
 #endif
             camera.Update();
 
-            _oldState = newState;
+            _oldKeyboardState = newKeyboardState;
 
             base.Update(gameTime);
         }

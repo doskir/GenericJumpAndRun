@@ -18,7 +18,7 @@ namespace GenericJumpAndRun
         private Viewport _viewport;
         private GameObject _focusObject;
         private CameraMode _mode;
-
+        public bool LockToPlayingArea = true;
         public Camera(int x, int y, int width, int height)
         {
             _viewport = new Viewport(x, y, width, height);
@@ -44,7 +44,7 @@ namespace GenericJumpAndRun
                     _viewport.X = (int) _focusObject.Position.X - _viewport.Width/2;
                 }
             }
-            if (_viewport.X < 0)
+            if (LockToPlayingArea && _viewport.X < 0)
                 _viewport.X = 0;
         }
 
