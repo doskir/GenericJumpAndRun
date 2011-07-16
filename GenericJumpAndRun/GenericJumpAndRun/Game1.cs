@@ -38,8 +38,19 @@ namespace GenericJumpAndRun
 #if DEBUG
             logWindow = new LogWindow();
             logWindow.Show();
+            RandomDebugFunctionToBeRemoved();
+        }
+        public void RandomDebugFunctionToBeRemoved()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int y = 0; y <= 512; y+=32)
+            {
+                sb.AppendLine("-32," + y + ",borderblock");
+            }
+
 #endif
         }
+
         internal Level LoadLevelFromFile(string filename)
         {
             Level level = new Level();
@@ -47,7 +58,10 @@ namespace GenericJumpAndRun
             {
                 while (!sr.EndOfStream)
                 {
-                    string[] split = sr.ReadLine().Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
+                    string s = sr.ReadLine();
+                    if (s.StartsWith("//") || s == "")
+                        continue;
+                    string[] split = s.Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
                     Texture2D sprite = Content.Load<Texture2D>(split[2]);
                     sprite.Name = split[2];
                     GameObject gameObject = new GameObject(new Vector2(float.Parse(split[0]), float.Parse(split[1])),
@@ -147,7 +161,7 @@ namespace GenericJumpAndRun
             {
                 noclip = !noclip;
             }
-#endif
+
             if (noclip)
             {
                 if (newState.IsKeyDown(Keys.Left))
@@ -177,22 +191,24 @@ namespace GenericJumpAndRun
             }
             else
             {
+#endif
 
-
-                if (newState.IsKeyDown(Keys.Left))
-                {
-                    player.Move(Player.Direction.Left);
-                }
-                else if (newState.IsKeyDown(Keys.Right))
-                {
-                    player.Move(Player.Direction.Right);
-                }
-                if (newState.IsKeyDown(Keys.Up))
-                {
-                    player.Jump();
-                }
-                player.Update(currentLevel);
+            if (newState.IsKeyDown(Keys.Left))
+            {
+                player.Move(Player.Direction.Left);
             }
+            else if (newState.IsKeyDown(Keys.Right))
+            {
+                player.Move(Player.Direction.Right);
+            }
+            if (newState.IsKeyDown(Keys.Up))
+            {
+                player.Jump();
+            }
+            player.Update(currentLevel);
+#if DEBUG
+            }
+#endif
             camera.Update();
 
             _oldState = newState;
