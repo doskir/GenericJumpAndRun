@@ -19,6 +19,10 @@ namespace GenericJumpAndRun
             get { return _rectangle.Y; }
             set { _rectangle.Y = value; }
         }
+        public Point Center
+        {
+            get { return _rectangle.Center; }
+        }
         public BoundingRectangle(int x, int y, int width, int height)
         {
             _rectangle = new Rectangle(x, y, width, height);
