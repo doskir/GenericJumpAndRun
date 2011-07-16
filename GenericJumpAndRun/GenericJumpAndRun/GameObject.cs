@@ -29,7 +29,7 @@ namespace GenericJumpAndRun
         }
         private Vector2 _position;
         public Vector2 Velocity;
-        public readonly Texture2D Sprite;
+        public Texture2D Sprite;
         public BoundingRectangle BoundingRectangle;
         public GameObject(Vector2 position,Vector2 velocity,Texture2D sprite)
         {

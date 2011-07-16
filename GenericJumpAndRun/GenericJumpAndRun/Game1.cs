@@ -28,6 +28,7 @@ namespace GenericJumpAndRun
         private Level currentLevel;
         private Player player;
         private Camera camera;
+        private List<Texture2D> blocks; 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -36,9 +37,12 @@ namespace GenericJumpAndRun
             graphics.PreferredBackBufferHeight = 480;
             Content.RootDirectory = "Content";
 #if DEBUG
+            this.IsMouseVisible = true;
             logWindow = new LogWindow();
             logWindow.Show();
             RandomDebugFunctionToBeRemoved();
+            blocks = new List<Texture2D>();
+
         }
         public void RandomDebugFunctionToBeRemoved()
         {
@@ -99,8 +103,19 @@ namespace GenericJumpAndRun
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            blocks.Add(Content.Load<Texture2D>("borderblock"));
+            blocks.Last().Name = "borderblock";
+            blocks.Add(Content.Load<Texture2D>("dirt"));
+            blocks.Last().Name = "dirt";
+            blocks.Add(Content.Load<Texture2D>("stoneblock"));
+            blocks.Last().Name = "stoneblock";
+
+
             heroTexture = Content.Load<Texture2D>("hero");
             heroTexture.Name = "hero";
+
+
+
             currentLevel = LoadLevelFromFile("leveldata.txt");
             player = new Player(new Vector2(32, 64), new Vector2(0,5), heroTexture);
             currentLevel.GameObjects.Add(player);
@@ -119,7 +134,7 @@ namespace GenericJumpAndRun
         }
 
         private KeyboardState _oldKeyboardState = Keyboard.GetState();
-
+        private MouseState _oldMouseState = Mouse.GetState();
 #if DEBUG
         private LogWindow logWindow;
         private bool noclip;
@@ -139,6 +154,10 @@ namespace GenericJumpAndRun
             KeyboardState newKeyboardState = Keyboard.GetState();
 
 #if DEBUG
+            if(_oldKeyboardState.IsKeyUp(Keys.P) && newKeyboardState.IsKeyDown(Keys.P))
+            {
+                logWindow.AddMessage(currentLevel.ToLevelString());
+            }
             if (_oldKeyboardState.IsKeyUp(Keys.Space) && newKeyboardState.IsKeyDown(Keys.Space))
             {
                 int x = (int) player.Position.X/32*32;
@@ -157,7 +176,7 @@ namespace GenericJumpAndRun
                 if (assetName == "air")
                 {
                     currentLevel.GameObjects.Add(new GameObject(new Vector2(x, y), Vector2.Zero,
-                                                                Content.Load<Texture2D>("dirt")));
+                                                                blocks.Where(b => b.Name == "dirt").Single()));
                 }
                 logWindow.AddMessage(x + "," + y + "," + assetName);
                 Console.WriteLine("{0},{1},{2}", x, y, assetName);
@@ -167,7 +186,40 @@ namespace GenericJumpAndRun
                 noclip = !noclip;
                 camera.LockToPlayingArea = !camera.LockToPlayingArea;
             }
-    
+            MouseState newMouseState = Mouse.GetState();
+            if(newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
+            {
+                int x = (int) newMouseState.X/32*32;
+                int y = (int) newMouseState.Y/32*32;
+                GameObject block = null;
+                try
+                {
+                    block =
+                        currentLevel.GameObjects.Where(
+                            gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y).Single();
+                }
+                catch (Exception)
+                { }
+
+                if (block != null)
+                {
+                    int nextBlockIndex = blocks.IndexOf(block.Sprite) + 1;
+                    if (nextBlockIndex >= blocks.Count())
+                    {
+                        currentLevel.GameObjects.Remove(block);
+                    }
+                    else
+                    {
+                        block.Sprite = blocks[nextBlockIndex];
+                    }
+                }
+                else
+                {
+                    block = new GameObject(new Vector2(x,y),Vector2.Zero, blocks[0]);
+                    currentLevel.GameObjects.Add(block);
+                }
+            }
+            _oldMouseState = newMouseState;
 
             if (noclip)
             {
