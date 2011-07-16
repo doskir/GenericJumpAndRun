@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="GameObject.cs" />
+    <Compile Include="Level.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
