@@ -35,6 +35,10 @@ namespace GenericJumpAndRun
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
             Content.RootDirectory = "Content";
+#if DEBUG
+            logWindow = new LogWindow();
+            logWindow.Show();
+#endif
         }
         internal Level LoadLevelFromFile(string filename)
         {
@@ -45,6 +49,7 @@ namespace GenericJumpAndRun
                 {
                     string[] split = sr.ReadLine().Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
                     Texture2D sprite = Content.Load<Texture2D>(split[2]);
+                    sprite.Name = split[2];
                     GameObject gameObject = new GameObject(new Vector2(float.Parse(split[0]), float.Parse(split[1])),
                                                            new Vector2(0, 0), sprite);
                     level.GameObjects.Add(gameObject);
@@ -81,6 +86,7 @@ namespace GenericJumpAndRun
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             heroTexture = Content.Load<Texture2D>("hero");
+            heroTexture.Name = "hero";
             currentLevel = LoadLevelFromFile("leveldata.txt");
             player = new Player(new Vector2(32, 64), new Vector2(0,5), heroTexture);
             currentLevel.GameObjects.Add(player);
@@ -99,6 +105,10 @@ namespace GenericJumpAndRun
         }
 
         private KeyboardState _oldState = Keyboard.GetState();
+#if DEBUG
+        private LogWindow logWindow;
+        private bool noclip;
+#endif
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -112,24 +122,80 @@ namespace GenericJumpAndRun
 
             // TODO: Add your update logic here
             KeyboardState newState = Keyboard.GetState();
-            if (newState.IsKeyDown(Keys.Left))
-            {
-                player.Move(Player.Direction.Left);
-            }
-            else if (newState.IsKeyDown(Keys.Right))
-            {
-                player.Move(Player.Direction.Right);
-            }
-            if (newState.IsKeyDown(Keys.Up))
-            {
-                player.Jump();
-            }
-            _oldState = newState;
 
-            player.Update(currentLevel);
+#if DEBUG
+            if (_oldState.IsKeyUp(Keys.Space) && newState.IsKeyDown(Keys.Space))
+            {
+                int x = (int) player.Position.X/32*32;
+                int y = (int) player.Position.Y/32*32;
+                string assetName = "air";
+
+                try
+                {
+                    assetName =
+                        currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y).Single().Sprite
+                        .Name;
+                }
+                catch (InvalidOperationException)
+                {
+                }
+
+                logWindow.AddMessage(x + "," + y + "," + assetName);
+                Console.WriteLine("{0},{1},dirt", x, y);
+            }
+            if(_oldState.IsKeyUp(Keys.N) && newState.IsKeyDown(Keys.N))
+            {
+                noclip = !noclip;
+            }
+#endif
+            if (noclip)
+            {
+                if (newState.IsKeyDown(Keys.Left))
+                {
+                    Vector2 newPos = player.Position;
+                    newPos.X -= 2;
+                    player.Position = newPos;
+                }
+                else if (newState.IsKeyDown(Keys.Right))
+                {
+                    Vector2 newPos = player.Position;
+                    newPos.X += 2;
+                    player.Position = newPos;
+                }
+                if (newState.IsKeyDown(Keys.Up))
+                {
+                    Vector2 newPos = player.Position;
+                    newPos.Y -= 2;
+                    player.Position = newPos;
+                }
+                if(newState.IsKeyDown(Keys.Down))
+                {
+                    Vector2 newPos = player.Position;
+                    newPos.Y += 2;
+                    player.Position = newPos;
+                }
+            }
+            else
+            {
+
+
+                if (newState.IsKeyDown(Keys.Left))
+                {
+                    player.Move(Player.Direction.Left);
+                }
+                else if (newState.IsKeyDown(Keys.Right))
+                {
+                    player.Move(Player.Direction.Right);
+                }
+                if (newState.IsKeyDown(Keys.Up))
+                {
+                    player.Jump();
+                }
+                player.Update(currentLevel);
+            }
             camera.Update();
-            
 
+            _oldState = newState;
 
             base.Update(gameTime);
         }
