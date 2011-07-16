@@ -142,20 +142,18 @@ namespace GenericJumpAndRun
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            Vector2 minPosition = camera.Position+ new  Vector2(-50, -50);
-            Vector2 maxPosition = camera.Position+ new Vector2(690, 530);
+            Vector2 minPosition = player.Position -camera.Position - new  Vector2(500, 500);
+            Vector2 maxPosition = player.Position -camera.Position + new Vector2(500, 500);
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             foreach (GameObject gobj in currentLevel.GameObjects)
             {
-                Vector2 actualPosition = gobj.Position - camera.Position;
-                //if (actualPosition.X < minPosition.X || actualPosition.Y < minPosition.X
-                 //   || actualPosition.X > maxPosition.X || actualPosition.Y > maxPosition.Y)
-                //{
-                 //   continue;
-                //}
-                spriteBatch.Draw(gobj.Sprite,actualPosition, Color.White);
+                if (camera.Visible(gobj))
+                {
+                    Vector2 actualPosition = gobj.Position - camera.Position;
 
+                    spriteBatch.Draw(gobj.Sprite, actualPosition, Color.White);
+                }
             }
             spriteBatch.End();
             base.Draw(gameTime);
