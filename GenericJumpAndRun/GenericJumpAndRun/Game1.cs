@@ -150,43 +150,19 @@ namespace GenericJumpAndRun
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
             KeyboardState newKeyboardState = Keyboard.GetState();
+            MouseState newMouseState = Mouse.GetState();
 
 #if DEBUG
             if(_oldKeyboardState.IsKeyUp(Keys.P) && newKeyboardState.IsKeyDown(Keys.P))
             {
                 logWindow.AddMessage(currentLevel.ToLevelString());
             }
-            if (_oldKeyboardState.IsKeyUp(Keys.Space) && newKeyboardState.IsKeyDown(Keys.Space))
-            {
-                int x = (int) player.Position.X/32*32;
-                int y = (int) player.Position.Y/32*32;
-                string assetName = "air";
-
-                try
-                {
-                    assetName =
-                        currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y).Single().Sprite
-                        .Name;
-                }
-                catch (InvalidOperationException)
-                {
-                }
-                if (assetName == "air")
-                {
-                    currentLevel.GameObjects.Add(new GameObject(new Vector2(x, y), Vector2.Zero,
-                                                                blocks.Where(b => b.Name == "dirt").Single()));
-                }
-                logWindow.AddMessage(x + "," + y + "," + assetName);
-                Console.WriteLine("{0},{1},{2}", x, y, assetName);
-            }
             if(_oldKeyboardState.IsKeyUp(Keys.N) && newKeyboardState.IsKeyDown(Keys.N))
             {
                 noclip = !noclip;
                 camera.LockToPlayingArea = !camera.LockToPlayingArea;
             }
-            MouseState newMouseState = Mouse.GetState();
             if(newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
             {
                 int x = (int) newMouseState.X/32*32;
