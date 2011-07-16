@@ -19,6 +19,14 @@ namespace GenericJumpAndRun
                 BoundingRectangle.Y = (int) _position.Y;
             }
         }
+        public int Width
+        {
+            get { return Sprite.Width; }
+        }
+        public int Height
+        {
+            get { return Sprite.Height; }
+        }
         private Vector2 _position;
         public Vector2 Velocity;
         public readonly Texture2D Sprite;
@@ -37,6 +45,17 @@ namespace GenericJumpAndRun
             {
                 //TODO: Implement higher precision collision detection
                 return true;
+            }
+            return false;
+        }
+        public bool IntersectsWithAny(List<GameObject> gameObjects)
+        {
+            foreach(GameObject gobj in gameObjects)
+            {
+                if (gobj == this)
+                    continue;
+                if (IntersectsWith(gobj))
+                    return true;
             }
             return false;
         }
