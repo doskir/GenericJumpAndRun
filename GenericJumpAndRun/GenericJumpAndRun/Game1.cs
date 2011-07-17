@@ -197,17 +197,17 @@ namespace GenericJumpAndRun
             MouseState newMouseState = Mouse.GetState();
 
 #if DEBUG
-            if(_oldKeyboardState.IsKeyUp(Keys.P) && newKeyboardState.IsKeyDown(Keys.P))
+            if (_oldKeyboardState.IsKeyUp(Keys.P) && newKeyboardState.IsKeyDown(Keys.P))
             {
                 logWindow.AddMessage(currentLevel.ToLevelString());
             }
-            if(_oldKeyboardState.IsKeyUp(Keys.N) && newKeyboardState.IsKeyDown(Keys.N))
+            if (_oldKeyboardState.IsKeyUp(Keys.N) && newKeyboardState.IsKeyDown(Keys.N))
             {
                 noclip = !noclip;
                 camera.LockToPlayingArea = !noclip;
                 currentLevel.Playing = !noclip;
             }
-            if(_oldKeyboardState.IsKeyUp(Keys.R) && newKeyboardState.IsKeyDown(Keys.R))
+            if (_oldKeyboardState.IsKeyUp(Keys.R) && newKeyboardState.IsKeyDown(Keys.R))
             {
                 LoadLevel(currentLevel.Name);
                 return;
@@ -221,30 +221,14 @@ namespace GenericJumpAndRun
                 if (mousePositionX <= 0)
                     x -= 32;
                 GameObject block = null;
-                try
-                {
-                    var temp = currentLevel.GameObjects.Where(
-                        gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y);
-                    if (temp.Count() == 1)
-                        block = temp.First();
-                }
-                catch (Exception)
-                {}
-                //no block at those exact coordinates
-                if (block == null)
-                {
-                    try
-                    {
-                        BoundingRectangle boundingRectangle = new BoundingRectangle(mousePositionX - 1, mousePositionY - 1, 2, 2);
-                        var temp =
-                            currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
+                BoundingRectangle boundingRectangle = new BoundingRectangle(mousePositionX - 1, mousePositionY - 1,
+                                                                            2, 2);
+                var temp =
+                    currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
 
-                        if (temp.Count() == 1)
-                            block = temp.First();
-                    }
-                    catch (Exception)
-                    { }
-                }
+                if (temp.Count() == 1)
+                    block = temp.First();
+
                 if (newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
                 {
                     if (block != null)
@@ -261,7 +245,8 @@ namespace GenericJumpAndRun
                     }
                     else
                     {
-                        block = new GameObject(new Vector2(x, y), Vector2.Zero, blocks[0], GameObject.ObjectType.Block);
+                        block = new GameObject(new Vector2(x, y), Vector2.Zero, blocks[0],
+                                               GameObject.ObjectType.Block);
                         currentLevel.GameObjects.Add(block);
                     }
                 }
