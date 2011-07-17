@@ -41,6 +41,8 @@ namespace GenericJumpAndRun
             }
             else
             {
+                if (Position.Y < -5000)
+                    Velocity = Vector2.Zero;
                 Position += Velocity;
             }
         }
