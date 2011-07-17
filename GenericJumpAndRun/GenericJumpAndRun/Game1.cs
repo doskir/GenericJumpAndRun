@@ -49,6 +49,13 @@ namespace GenericJumpAndRun
             this.IsMouseVisible = true;
             logWindow = new LogWindow();
             logWindow.Show();
+            logWindow.AddMessage("Press P to print the current level");
+            logWindow.AddMessage("Press N to enable noclip,flying and pause");
+            logWindow.AddMessage("Press R to reload the level");
+            logWindow.AddMessage("LeftClick to cycle through the available blocks");
+            logWindow.AddMessage(
+                "RightClick to spawn or remove an enemy, their spawnpoint will be added to the level file");
+            logWindow.AddMessage("the start and finish points have to be moved manually by editing the level file");
             RandomDebugFunctionToBeRemoved();
 
         }
