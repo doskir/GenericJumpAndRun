@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -10,6 +11,8 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace GenericJumpAndRun
 {
@@ -33,10 +36,11 @@ namespace GenericJumpAndRun
         private Player player;
         private Camera camera;
         private List<Texture2D> blocks = new List<Texture2D>();
+        private Form form;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-
+            form = (Form) Control.FromHandle(Window.Handle);
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
             Content.RootDirectory = "Content";
@@ -212,7 +216,7 @@ namespace GenericJumpAndRun
                 LoadLevel(currentLevel.Name);
                 return;
             }
-            if (newMouseState.LeftButton == ButtonState.Pressed || newMouseState.RightButton == ButtonState.Pressed)
+            if (form.Focused && newMouseState.LeftButton == ButtonState.Pressed || newMouseState.RightButton == ButtonState.Pressed)
             {
                 int mousePositionX = (int) (newMouseState.X + camera.Position.X);
                 int mousePositionY = (int) (newMouseState.Y + camera.Position.Y);
