@@ -39,6 +39,7 @@ namespace GenericJumpAndRun
         private Form form;
         public Game1()
         {
+           
             graphics = new GraphicsDeviceManager(this);
             form = (Form) Control.FromHandle(Window.Handle);
             graphics.PreferredBackBufferWidth = 640;

@@ -18,10 +18,12 @@ namespace GenericJumpAndRun
         private Viewport _viewport;
         private GameObject _focusObject;
         private CameraMode _mode;
+        private BoundingRectangle _boundingRectangle;
         public bool LockToPlayingArea = true;
         public Camera(int x, int y, int width, int height)
         {
             _viewport = new Viewport(x, y, width, height);
+            _boundingRectangle = new BoundingRectangle(x, y, width, height);
         }
 
         public Vector2 Position
@@ -42,19 +44,19 @@ namespace GenericJumpAndRun
                 if (_viewport.Bounds.Center != _focusObject.BoundingRectangle.Center)
                 {
                     _viewport.X = (int) _focusObject.Position.X - _viewport.Width/2;
+                    _boundingRectangle.X = _viewport.X;
                 }
             }
             if (LockToPlayingArea && _viewport.X < 0)
+            {
                 _viewport.X = 0;
+                _boundingRectangle.X = _viewport.X;
+            }
         }
 
         public bool Visible(GameObject gobj)
         {
-            Vector2 minPosition = new Vector2(_viewport.Bounds.Left - 50, _viewport.Bounds.Top - 50);
-            Vector2 maxPosition = new Vector2(_viewport.Bounds.Right + 50, _viewport.Bounds.Bottom + 50);
-            if (gobj.Position.X < minPosition.X || gobj.Position.Y < minPosition.Y || gobj.Position.X > maxPosition.X || gobj.Position.Y > maxPosition.Y)
-                return false;
-            return true;
+            return _boundingRectangle.IntersectsWith(gobj.BoundingRectangle);
         }
     }
 }
