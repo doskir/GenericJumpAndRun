@@ -16,7 +16,7 @@ namespace GenericJumpAndRun
         public bool CanJump = true;
         public void Jump()
         {
-            if(CanJump)
+            if(Alive && CanJump)
             {
                 Velocity.Y -= 10f;
                 CanJump = false;
@@ -26,6 +26,22 @@ namespace GenericJumpAndRun
         {
             Velocity.Y = 0;
             CanJump = true;
+        }
+        public override void DetectEnemyHit(MovingObject mob)
+        {
+            //collision with enemy detected
+            if (Position.Y < mob.Position.Y - mob.Height /2)
+            {
+                //hit enemy from above
+                mob.Die();
+                //bounce off of enemy
+                CanJump = true;
+                Jump();
+            }
+            else
+            {
+                Die();
+            }
         }
     }
 }

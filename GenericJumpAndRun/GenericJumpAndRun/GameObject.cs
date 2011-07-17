@@ -43,6 +43,7 @@ namespace GenericJumpAndRun
             _position = position;
             Velocity = velocity;
             Sprite = sprite;
+            Type = objectType;
             BoundingRectangle = new BoundingRectangle((int) _position.X, (int) _position.Y, sprite.Width, sprite.Height);
         }
 
@@ -55,7 +56,7 @@ namespace GenericJumpAndRun
             }
             return false;
         }
-        public bool IntersectsWithAny(List<GameObject> gameObjects)
+        public virtual bool IntersectsWithAny(List<GameObject> gameObjects)
         {
             foreach(GameObject gobj in gameObjects)
             {
