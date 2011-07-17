@@ -96,6 +96,8 @@ namespace GenericJumpAndRun
                 {
                     if (gobj.Type == ObjectType.Enemy || gobj.Type == ObjectType.Player)
                     {
+                        if (Type == ObjectType.Enemy && gobj.Type == ObjectType.Enemy)
+                            return true;
                         MovingObject mob = (MovingObject) gobj;
                         if (mob.Alive)
                         {

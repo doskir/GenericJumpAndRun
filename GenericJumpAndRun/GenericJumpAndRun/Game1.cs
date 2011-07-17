@@ -146,7 +146,7 @@ namespace GenericJumpAndRun
             heroTexture = Content.Load<Texture2D>("hero");
             heroTexture.Name = "hero";
 
-            LoadLevel("leveldata.txt");
+            LoadLevel("testlevel.txt");
 
         }
         private void LoadLevel(string levelname)
@@ -279,18 +279,20 @@ namespace GenericJumpAndRun
             else
             {
 #endif
-
-                if (newKeyboardState.IsKeyDown(Keys.Left))
+                if (currentLevel.Playing)
                 {
-                    player.Move(Player.Direction.Left);
-                }
-                else if (newKeyboardState.IsKeyDown(Keys.Right))
-                {
-                    player.Move(Player.Direction.Right);
-                }
-                if (newKeyboardState.IsKeyDown(Keys.Up))
-                {
-                    player.Jump();
+                    if (newKeyboardState.IsKeyDown(Keys.Left))
+                    {
+                        player.Move(Player.Direction.Left);
+                    }
+                    else if (newKeyboardState.IsKeyDown(Keys.Right))
+                    {
+                        player.Move(Player.Direction.Right);
+                    }
+                    if (newKeyboardState.IsKeyDown(Keys.Up))
+                    {
+                        player.Jump();
+                    }
                 }
                 foreach(GameObject gobj in currentLevel.GameObjects)
                 {
@@ -336,8 +338,15 @@ namespace GenericJumpAndRun
             {
                 string text = "YOU WIN!";
                 Vector2 textSize = spriteFont.MeasureString(text);
-                Vector2 textCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
-                spriteBatch.DrawString(spriteFont, text, textCenter - textSize/2, Color.Black);
+                Vector2 screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
+                spriteBatch.DrawString(spriteFont, text, screenCenter - textSize/2, Color.Black);
+            }
+            if(!player.Alive)
+            {
+                string text = "You died" + Environment.NewLine + "Press R to restart.";
+                Vector2 textSize = spriteFont.MeasureString(text);
+                Vector2 screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
+                spriteBatch.DrawString(spriteFont, text, screenCenter - textSize/2, Color.Black);
             }
 #if DEBUG
             Vector2 startPosition = currentLevel.StartZone.Position - camera.Position;
