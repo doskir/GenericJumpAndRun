@@ -11,6 +11,7 @@ namespace GenericJumpAndRun
 {
     class Level
     {
+        public string Name;
         public List<GameObject> GameObjects;
         public GameObject StartZone;
         public GameObject FinishZone;

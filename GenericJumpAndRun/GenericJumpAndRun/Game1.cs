@@ -32,7 +32,7 @@ namespace GenericJumpAndRun
         private Level currentLevel;
         private Player player;
         private Camera camera;
-        private List<Texture2D> blocks;
+        private List<Texture2D> blocks = new List<Texture2D>();
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -45,7 +45,6 @@ namespace GenericJumpAndRun
             logWindow = new LogWindow();
             logWindow.Show();
             RandomDebugFunctionToBeRemoved();
-            blocks = new List<Texture2D>();
 
         }
         public void RandomDebugFunctionToBeRemoved()
@@ -147,13 +146,18 @@ namespace GenericJumpAndRun
             heroTexture = Content.Load<Texture2D>("hero");
             heroTexture.Name = "hero";
 
-            currentLevel = LoadLevelFromFile("leveldata.txt");
+            LoadLevel("leveldata.txt");
 
-            player = new Player(currentLevel.StartZone.Position, new Vector2(0,5), heroTexture);
+        }
+        private void LoadLevel(string levelname)
+        {
+            currentLevel = LoadLevelFromFile(levelname);
+            currentLevel.Name = levelname;
+
+            player = new Player(currentLevel.StartZone.Position, new Vector2(0, 5), heroTexture);
 
             currentLevel.GameObjects.Add(player);
             camera.LockToObject(player);
-
         }
 
         /// <summary>
@@ -194,6 +198,11 @@ namespace GenericJumpAndRun
             {
                 noclip = !noclip;
                 camera.LockToPlayingArea = !camera.LockToPlayingArea;
+            }
+            if(_oldKeyboardState.IsKeyUp(Keys.R) && newKeyboardState.IsKeyDown(Keys.R))
+            {
+                LoadLevel(currentLevel.Name);
+                return;
             }
             if(newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
             {
