@@ -267,7 +267,21 @@ namespace GenericJumpAndRun
                 {
                     if (block == null)
                     {
-                        currentLevel.GameObjects.Add(new Enemy(new Vector2(x, y), Vector2.Zero, enemyTexture));
+                        Enemy newEnemy = new Enemy(new Vector2(x, y), Vector2.Zero, enemyTexture);
+                        bool emptyPosition = true;
+                        foreach (GameObject gobj in currentLevel.GameObjects)
+                        {
+                            if (gobj.Type == GameObject.ObjectType.Enemy)
+                            {
+                                Enemy existingEnemy = (Enemy) gobj;
+                                if (existingEnemy.SpawnLocation == newEnemy.SpawnLocation)
+                                {
+                                    emptyPosition = false;
+                                }
+                            }
+                        }
+                        if (emptyPosition)
+                            currentLevel.GameObjects.Add(newEnemy);
                     }
                     else
                     {
