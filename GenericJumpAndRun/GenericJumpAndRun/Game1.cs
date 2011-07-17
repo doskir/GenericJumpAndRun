@@ -25,11 +25,14 @@ namespace GenericJumpAndRun
         //the sprites will be 32x32
         //the screen will be 20 tiles wide and 15 tiles high
         private Texture2D heroTexture;
+        private Texture2D enemyTexture;
+        private Texture2D startZoneTexture;
+        private Texture2D finishZoneTexture;
+        private SpriteFont spriteFont;
         private Level currentLevel;
         private Player player;
         private Camera camera;
         private List<Texture2D> blocks;
-        private Texture2D enemyTexture;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -67,11 +70,31 @@ namespace GenericJumpAndRun
                     if (s.StartsWith("//") || s == "")
                         continue;
                     string[] split = s.Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
-                    Texture2D sprite = Content.Load<Texture2D>(split[2]);
-                    sprite.Name = split[2];
-                    GameObject gameObject = new GameObject(new Vector2(float.Parse(split[0]), float.Parse(split[1])),
-                                                           new Vector2(0, 0), sprite,GameObject.ObjectType.Block);
-                    level.GameObjects.Add(gameObject);
+                    if (split[2] == "startzone")
+                    {
+                        Texture2D sprite = startZoneTexture;
+                        GameObject startZone = new GameObject(
+                            new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero, sprite,
+                            GameObject.ObjectType.StartZone);
+                        level.StartZone = startZone;
+                    }
+                    else if (split[2] == "finishzone")
+                    {
+                        Texture2D sprite = finishZoneTexture;
+                        GameObject finishZone = new GameObject(
+                            new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero, sprite,
+                            GameObject.ObjectType.FinishZone);
+                        level.FinishZone = finishZone;
+                    }
+                    else
+                    {
+                        Texture2D sprite = Content.Load<Texture2D>(split[2]);
+                        sprite.Name = split[2];
+                        GameObject gameObject = new GameObject(
+                            new Vector2(float.Parse(split[0]), float.Parse(split[1])),
+                            new Vector2(0, 0), sprite, GameObject.ObjectType.Block);
+                        level.GameObjects.Add(gameObject);
+                    }
                 }
             }
             return level;
@@ -89,7 +112,6 @@ namespace GenericJumpAndRun
         /// </summary>
         protected override void Initialize()
         {
-            currentLevel = LoadLevelFromFile("leveldata.txt");
             camera = new Camera(0, 0, 640, 480);
 
             base.Initialize();
@@ -105,6 +127,8 @@ namespace GenericJumpAndRun
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            spriteFont = Content.Load<SpriteFont>("SpriteFont1");
+
             blocks.Add(Content.Load<Texture2D>("borderblock"));
             blocks.Last().Name = "borderblock";
             blocks.Add(Content.Load<Texture2D>("dirt"));
@@ -112,12 +136,20 @@ namespace GenericJumpAndRun
             blocks.Add(Content.Load<Texture2D>("stoneblock"));
             blocks.Last().Name = "stoneblock";
 
+            startZoneTexture = Content.Load<Texture2D>("startzone");
+            startZoneTexture.Name = "startzone";
+            finishZoneTexture = Content.Load<Texture2D>("finishzone");
+            finishZoneTexture.Name = "finishzone";
+
             enemyTexture = Content.Load<Texture2D>("enemy");
             enemyTexture.Name = "enemy";
 
             heroTexture = Content.Load<Texture2D>("hero");
             heroTexture.Name = "hero";
-            player = new Player(new Vector2(32, 64), new Vector2(0,5), heroTexture);
+
+            currentLevel = LoadLevelFromFile("leveldata.txt");
+
+            player = new Player(currentLevel.StartZone.Position, new Vector2(0,5), heroTexture);
 
             currentLevel.GameObjects.Add(player);
             camera.LockToObject(player);
@@ -272,6 +304,10 @@ namespace GenericJumpAndRun
 #if DEBUG
             }
 #endif
+            if(player.HasFinished(currentLevel))
+            {
+                currentLevel.Finished = true;
+            }
             camera.Update();
 
             _oldKeyboardState = newKeyboardState;
@@ -296,10 +332,22 @@ namespace GenericJumpAndRun
                 if (camera.Visible(gobj))
                 {
                     Vector2 actualPosition = gobj.Position - camera.Position;
-
                     spriteBatch.Draw(gobj.Sprite, actualPosition, Color.White);
                 }
             }
+            if(currentLevel.Finished)
+            {
+                string text = "YOU WIN!";
+                Vector2 textSize = spriteFont.MeasureString(text);
+                Vector2 textCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
+                spriteBatch.DrawString(spriteFont, text, textCenter - textSize/2, Color.Black);
+            }
+#if DEBUG
+            Vector2 startPosition = currentLevel.StartZone.Position - camera.Position;
+            Vector2 finishPosition = currentLevel.FinishZone.Position - camera.Position;
+            spriteBatch.Draw(currentLevel.StartZone.Sprite, startPosition, Color.White);
+            spriteBatch.Draw(currentLevel.FinishZone.Sprite, finishPosition, Color.White);
+#endif
             spriteBatch.End();
             base.Draw(gameTime);
         }

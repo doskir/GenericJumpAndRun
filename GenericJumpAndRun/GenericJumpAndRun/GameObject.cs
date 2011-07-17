@@ -13,7 +13,9 @@ namespace GenericJumpAndRun
         {
             Block,
             Player,
-            Enemy
+            Enemy,
+            StartZone,
+            FinishZone
         }
         public Vector2 Position
         {

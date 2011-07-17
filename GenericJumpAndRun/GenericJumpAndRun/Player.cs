@@ -43,5 +43,11 @@ namespace GenericJumpAndRun
                 Die();
             }
         }
+        public bool HasFinished(Level currentLevel)
+        {
+            if (IntersectsWith(currentLevel.FinishZone))
+                return true;
+            return false;
+        }
     }
 }
