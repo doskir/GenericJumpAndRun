@@ -197,9 +197,11 @@ namespace GenericJumpAndRun
             }
             if(newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
             {
-                int x = (int) (newMouseState.X + camera.Position.X)/32*32;
-                int y = (int) (newMouseState.Y + camera.Position.Y)/32*32;
-                if (x <= 0)
+                int mousePositionX = (int)(newMouseState.X + camera.Position.X);
+                int mousePositionY = (int) (newMouseState.Y + camera.Position.Y);
+                int x = (int) (mousePositionX)/32*32;
+                int y = (int) (mousePositionY)/32*32;
+                if (mousePositionX <= 0)
                     x -= 32;
                 GameObject block = null;
                 try
