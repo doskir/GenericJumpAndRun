@@ -204,24 +204,24 @@ namespace GenericJumpAndRun
                 LoadLevel(currentLevel.Name);
                 return;
             }
+            int mousePositionX = (int)(newMouseState.X + camera.Position.X);
+            int mousePositionY = (int)(newMouseState.Y + camera.Position.Y);
+            int x = (mousePositionX) / 32 * 32;
+            int y = (mousePositionY) / 32 * 32;
+            if (mousePositionX <= 0)
+                x -= 32;
+            GameObject block = null;
+            try
+            {
+                var temp = currentLevel.GameObjects.Where(
+                    gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y);
+                if (temp.Count() == 1)
+                    block = temp.First();
+            }
+            catch (Exception)
+            { }
             if(newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
             {
-                int mousePositionX = (int)(newMouseState.X + camera.Position.X);
-                int mousePositionY = (int) (newMouseState.Y + camera.Position.Y);
-                int x = (int) (mousePositionX)/32*32;
-                int y = (int) (mousePositionY)/32*32;
-                if (mousePositionX <= 0)
-                    x -= 32;
-                GameObject block = null;
-                try
-                {
-                    block =
-                        currentLevel.GameObjects.Where(
-                            gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y).Single();
-                }
-                catch (Exception)
-                { }
-
                 if (block != null)
                 {
                     int nextBlockIndex = blocks.IndexOf(block.Sprite) + 1;
@@ -242,20 +242,6 @@ namespace GenericJumpAndRun
             }
             if (newMouseState.RightButton == ButtonState.Pressed && _oldMouseState.RightButton == ButtonState.Released)
             {
-                int x = (int) (newMouseState.X + camera.Position.X)/32*32;
-                int y = (int) (newMouseState.Y + camera.Position.Y)/32*32;
-                if (x <= 0)
-                    x -= 32;
-                GameObject block = null;
-                try
-                {
-                    block =
-                        currentLevel.GameObjects.Where(
-                            gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y).Single();
-                }
-                catch (Exception)
-                {}
-
                 if (block == null)
                 {
                     currentLevel.GameObjects.Add(new Enemy(new Vector2(x, y), Vector2.Zero, enemyTexture));
