@@ -33,6 +33,11 @@ namespace GenericJumpAndRun
             {
                 if (gobj.Type == GameObject.ObjectType.Block)
                     sb.AppendLine(gobj.BoundingRectangle.X + "," + gobj.BoundingRectangle.Y + "," + gobj.Sprite.Name);
+                if(gobj.Type == GameObject.ObjectType.Enemy)
+                {
+                    Enemy enemy = (Enemy) gobj;
+                    sb.AppendLine(enemy.SpawnLocation.X + "," + enemy.SpawnLocation.Y + "," + enemy.Sprite.Name);
+                }
             }
             return sb.ToString();
         }

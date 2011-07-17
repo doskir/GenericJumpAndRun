@@ -85,6 +85,13 @@ namespace GenericJumpAndRun
                             GameObject.ObjectType.FinishZone);
                         level.FinishZone = finishZone;
                     }
+                    else if(split[2] == "enemy")
+                    {
+                        Texture2D sprite = enemyTexture;
+                        Enemy enemy = new Enemy(new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero,
+                                                sprite);
+                        level.GameObjects.Add(enemy);
+                    }
                     else
                     {
                         Texture2D sprite = Content.Load<Texture2D>(split[2]);
@@ -205,54 +212,73 @@ namespace GenericJumpAndRun
                 LoadLevel(currentLevel.Name);
                 return;
             }
-            int mousePositionX = (int)(newMouseState.X + camera.Position.X);
-            int mousePositionY = (int)(newMouseState.Y + camera.Position.Y);
-            int x = (mousePositionX) / 32 * 32;
-            int y = (mousePositionY) / 32 * 32;
-            if (mousePositionX <= 0)
-                x -= 32;
-            GameObject block = null;
-            try
+            if (newMouseState.LeftButton == ButtonState.Pressed || newMouseState.RightButton == ButtonState.Pressed)
             {
-                var temp = currentLevel.GameObjects.Where(
-                    gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y);
-                if (temp.Count() == 1)
-                    block = temp.First();
-            }
-            catch (Exception)
-            { }
-            if(newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
-            {
-                if (block != null)
+                int mousePositionX = (int) (newMouseState.X + camera.Position.X);
+                int mousePositionY = (int) (newMouseState.Y + camera.Position.Y);
+                int x = (mousePositionX)/32*32;
+                int y = (mousePositionY)/32*32;
+                if (mousePositionX <= 0)
+                    x -= 32;
+                GameObject block = null;
+                try
                 {
-                    int nextBlockIndex = blocks.IndexOf(block.Sprite) + 1;
-                    if (nextBlockIndex >= blocks.Count())
+                    var temp = currentLevel.GameObjects.Where(
+                        gobj => gobj.BoundingRectangle.X == x && gobj.BoundingRectangle.Y == y);
+                    if (temp.Count() == 1)
+                        block = temp.First();
+                }
+                catch (Exception)
+                {}
+                //no block at those exact coordinates
+                if (block == null)
+                {
+                    try
                     {
-                        currentLevel.GameObjects.Remove(block);
+                        BoundingRectangle boundingRectangle = new BoundingRectangle(mousePositionX - 1, mousePositionY - 1, 2, 2);
+                        var temp =
+                            currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
+
+                        if (temp.Count() == 1)
+                            block = temp.First();
+                    }
+                    catch (Exception)
+                    { }
+                }
+                if (newMouseState.LeftButton == ButtonState.Pressed && _oldMouseState.LeftButton == ButtonState.Released)
+                {
+                    if (block != null)
+                    {
+                        int nextBlockIndex = blocks.IndexOf(block.Sprite) + 1;
+                        if (nextBlockIndex >= blocks.Count())
+                        {
+                            currentLevel.GameObjects.Remove(block);
+                        }
+                        else
+                        {
+                            block.Sprite = blocks[nextBlockIndex];
+                        }
                     }
                     else
                     {
-                        block.Sprite = blocks[nextBlockIndex];
+                        block = new GameObject(new Vector2(x, y), Vector2.Zero, blocks[0], GameObject.ObjectType.Block);
+                        currentLevel.GameObjects.Add(block);
                     }
                 }
-                else
+                if (newMouseState.RightButton == ButtonState.Pressed
+                    && _oldMouseState.RightButton == ButtonState.Released)
                 {
-                    block = new GameObject(new Vector2(x,y),Vector2.Zero, blocks[0],GameObject.ObjectType.Block);
-                    currentLevel.GameObjects.Add(block);
-                }
-            }
-            if (newMouseState.RightButton == ButtonState.Pressed && _oldMouseState.RightButton == ButtonState.Released)
-            {
-                if (block == null)
-                {
-                    currentLevel.GameObjects.Add(new Enemy(new Vector2(x, y), Vector2.Zero, enemyTexture));
-                }
-                else
-                {
-                    if (block.Type == GameObject.ObjectType.Enemy)
-                        currentLevel.GameObjects.Remove(block);
-                        
-                    
+                    if (block == null)
+                    {
+                        currentLevel.GameObjects.Add(new Enemy(new Vector2(x, y), Vector2.Zero, enemyTexture));
+                    }
+                    else
+                    {
+                        if (block.Type == GameObject.ObjectType.Enemy)
+                            currentLevel.GameObjects.Remove(block);
+
+
+                    }
                 }
             }
             _oldMouseState = newMouseState;

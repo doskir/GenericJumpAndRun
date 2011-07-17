@@ -10,9 +10,10 @@ namespace GenericJumpAndRun
     class Enemy : MovingObject
     {
         public Direction movementDirection;
+        public Point SpawnLocation;
         public Enemy(Vector2 position, Vector2 velocity, Texture2D sprite) : base(position, velocity, sprite, ObjectType.Enemy)
         {
-            
+            SpawnLocation = new Point((int) position.X, (int) position.Y);
         }
         public override void Update(Level currentLevel)
         {

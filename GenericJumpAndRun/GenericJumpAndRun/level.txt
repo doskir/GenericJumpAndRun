@@ -1,8 +1,5 @@
 32,416,startzone
-
-
 320,416,finishzone
-//left border
 -32,0,borderblock
 -32,32,borderblock
 -32,64,borderblock
@@ -20,7 +17,6 @@
 -32,448,borderblock
 -32,480,borderblock
 -32,512,borderblock
-
 0,416,stoneblock
 0,448,dirt
 32,448,dirt
@@ -58,3 +54,11 @@
 992,64,stoneblock
 992,96,stoneblock
 992,128,stoneblock
+352,416,borderblock
+352,384,borderblock
+384,384,borderblock
+416,384,borderblock
+448,384,borderblock
+480,384,borderblock
+480,416,borderblock
+416,416,enemy
