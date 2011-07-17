@@ -197,7 +197,8 @@ namespace GenericJumpAndRun
             if(_oldKeyboardState.IsKeyUp(Keys.N) && newKeyboardState.IsKeyDown(Keys.N))
             {
                 noclip = !noclip;
-                camera.LockToPlayingArea = !camera.LockToPlayingArea;
+                camera.LockToPlayingArea = !noclip;
+                currentLevel.Playing = !noclip;
             }
             if(_oldKeyboardState.IsKeyUp(Keys.R) && newKeyboardState.IsKeyDown(Keys.R))
             {
@@ -246,6 +247,13 @@ namespace GenericJumpAndRun
                 {
                     currentLevel.GameObjects.Add(new Enemy(new Vector2(x, y), Vector2.Zero, enemyTexture));
                 }
+                else
+                {
+                    if (block.Type == GameObject.ObjectType.Enemy)
+                        currentLevel.GameObjects.Remove(block);
+                        
+                    
+                }
             }
             _oldMouseState = newMouseState;
 
@@ -293,20 +301,20 @@ namespace GenericJumpAndRun
                     {
                         player.Jump();
                     }
-                }
-                foreach(GameObject gobj in currentLevel.GameObjects)
-                {
-                    gobj.Update(currentLevel);
+                    foreach (GameObject gobj in currentLevel.GameObjects)
+                    {
+                        gobj.Update(currentLevel);
+                    }
+                    if (player.HasFinished(currentLevel))
+                    {
+                        currentLevel.Finished = true;
+                    }
                 }
 
 
 #if DEBUG
             }
 #endif
-            if(player.HasFinished(currentLevel))
-            {
-                currentLevel.Finished = true;
-            }
             camera.Update();
 
             _oldKeyboardState = newKeyboardState;
