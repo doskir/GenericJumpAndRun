@@ -28,7 +28,7 @@ namespace GenericJumpAndRun
                 if (Velocity.Y < 0)
                     Velocity.Y *= 0.90f;
 
-                if (IntersectsWithAny(currentLevel.GameObjects))
+                if (IntersectsWithAny(currentLevel.GameObjects) != null)
                 {
                     Position = lastPosition;
                     Velocity = new Vector2(0, Velocity.Y);
@@ -71,10 +71,13 @@ namespace GenericJumpAndRun
                 Velocity.Y += 0.3f;
                 var verticalVelocity = new Vector2(0, Velocity.Y);
                 Position += verticalVelocity;
-                if (IntersectsWithAny(level.GameObjects))
+                GameObject intersects = IntersectsWithAny(level.GameObjects);
+                if (intersects != null)
                 {
                     Position = originalPosition;
-                    ReachedBottom();
+                    //object is below this
+                    if (intersects.Position.Y > Position.Y)
+                        ReachedBottom();
                 }
             }
         }
@@ -92,10 +95,10 @@ namespace GenericJumpAndRun
             }
         }
 
-        public override bool IntersectsWithAny(List<GameObject> gameObjects)
+        public override GameObject IntersectsWithAny(List<GameObject> gameObjects)
         {
             if (!Alive)
-                return false;
+                return null;
             foreach (GameObject gobj in gameObjects)
             {
                 if (gobj == this)
@@ -105,7 +108,7 @@ namespace GenericJumpAndRun
                     if (gobj.Type == ObjectType.Enemy || gobj.Type == ObjectType.Player)
                     {
                         if (Type == ObjectType.Enemy && gobj.Type == ObjectType.Enemy)
-                            return true;
+                            return gobj;
                         var mob = (MovingObject) gobj;
                         if (mob.Alive)
                         {
@@ -114,11 +117,11 @@ namespace GenericJumpAndRun
                     }
                     else
                     {
-                        return true;
+                        return gobj;
                     }
                 }
             }
-            return false;
+            return null;
         }
         public virtual void DetectEnemyHit(MovingObject mob)
         {

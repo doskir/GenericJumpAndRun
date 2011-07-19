@@ -90,9 +90,14 @@ namespace GenericJumpAndRun
             texture.GetData(colors1D);
             return colors1D;
         }
-        public virtual bool IntersectsWithAny(List<GameObject> gameObjects)
+        public virtual GameObject IntersectsWithAny(List<GameObject> gameObjects)
         {
-            return gameObjects.Where(gobj => gobj != this).Any(IntersectsWith);
+            foreach (GameObject o in gameObjects)
+            {
+                if (IntersectsWith(o))
+                    return o;
+            }
+            return null;
         }
 
         public virtual void Update(Level currentLevel)
