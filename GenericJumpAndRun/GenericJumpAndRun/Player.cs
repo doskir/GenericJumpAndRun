@@ -14,7 +14,7 @@ namespace GenericJumpAndRun
         {
             if(Alive && CanJump)
             {
-                Velocity.Y -= 10f;
+                Velocity.Y = -10f;
                 CanJump = false;
             }
         }
