@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace GenericJumpAndRun
 {
@@ -12,7 +13,6 @@ namespace GenericJumpAndRun
         public GameObject StartZone;
         public GameObject FinishZone;
         public bool Finished;
-        public bool Playing;
         public DateTime LevelFinishTime;
         public Level()
         {
@@ -44,5 +44,6 @@ namespace GenericJumpAndRun
                 sw.Write(ToLevelString());
             }
         }
+
     }
 }

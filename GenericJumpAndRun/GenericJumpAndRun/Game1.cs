@@ -80,6 +80,15 @@ namespace GenericJumpAndRun
             levels.Sort();
             return levels;
         }
+        void LoadEmptyLevel()
+        {
+            Level level = new Level();
+            level.StartZone = new GameObject(new Vector2(0, 416), Vector2.Zero, _startZoneTexture,
+                                             GameObject.ObjectType.StartZone);
+            level.FinishZone = new GameObject(new Vector2(64, 416), Vector2.Zero, _finishZoneTexture,
+                                              GameObject.ObjectType.FinishZone);
+            _currentLevel = level;
+        }
         public void NextLevel()
         {
             _currentLevelIndex++;
@@ -252,7 +261,6 @@ namespace GenericJumpAndRun
             {
                 _noclip = !_noclip;
                 _camera.LockToPlayingArea = !_noclip;
-                _currentLevel.Playing = !_noclip;
             }
             if (_oldKeyboardState.IsKeyUp(Keys.L) && newKeyboardState.IsKeyDown(Keys.L))
             {
