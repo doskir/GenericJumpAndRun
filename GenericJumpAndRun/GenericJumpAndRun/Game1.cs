@@ -194,8 +194,8 @@ namespace GenericJumpAndRun
         }
 
         private KeyboardState _oldKeyboardState = Keyboard.GetState();
-        private MouseState _oldMouseState = Mouse.GetState();
 #if DEBUG
+        private MouseState _oldMouseState = Mouse.GetState();
         private readonly LogWindow _logWindow;
         private bool _noclip;
 #endif
@@ -211,9 +211,15 @@ namespace GenericJumpAndRun
                 Exit();
 
             KeyboardState newKeyboardState = Keyboard.GetState();
-            MouseState newMouseState = Mouse.GetState();
+
+            if (_oldKeyboardState.IsKeyUp(Keys.R) && newKeyboardState.IsKeyDown(Keys.R))
+            {
+                LoadLevel(_currentLevel.Name);
+                return;
+            }
 
 #if DEBUG
+                        MouseState newMouseState = Mouse.GetState();
             if (_oldKeyboardState.IsKeyUp(Keys.P) && newKeyboardState.IsKeyDown(Keys.P))
             {
                 _logWindow.AddMessage(_currentLevel.ToLevelString());
@@ -223,11 +229,6 @@ namespace GenericJumpAndRun
                 _noclip = !_noclip;
                 _camera.LockToPlayingArea = !_noclip;
                 _currentLevel.Playing = !_noclip;
-            }
-            if (_oldKeyboardState.IsKeyUp(Keys.R) && newKeyboardState.IsKeyDown(Keys.R))
-            {
-                LoadLevel(_currentLevel.Name);
-                return;
             }
             if(_oldKeyboardState.IsKeyUp(Keys.L) && newKeyboardState.IsKeyDown(Keys.L))
             {
@@ -341,7 +342,7 @@ namespace GenericJumpAndRun
             else
             {
 #endif
-                if (_currentLevel.Playing)
+            if (_currentLevel.Playing)
                 {
                     if (newKeyboardState.IsKeyDown(Keys.Left))
                     {
@@ -409,12 +410,11 @@ namespace GenericJumpAndRun
                 var screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
                 spriteBatch.DrawString(_spriteFont, text, screenCenter - textSize/2, Color.Black);
             }
-#if DEBUG
+
             Vector2 startPosition = _currentLevel.StartZone.Position - _camera.Position;
             Vector2 finishPosition = _currentLevel.FinishZone.Position - _camera.Position;
             spriteBatch.Draw(_currentLevel.StartZone.Sprite, startPosition, Color.White);
             spriteBatch.Draw(_currentLevel.FinishZone.Sprite, finishPosition, Color.White);
-#endif
             spriteBatch.End();
             base.Draw(gameTime);
         }
