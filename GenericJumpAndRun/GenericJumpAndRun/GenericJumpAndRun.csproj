@@ -128,12 +128,9 @@
     <Compile Include="Game1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="customlevel.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
-    <Content Include="level.txt">
+    <Content Include="level1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -166,7 +166,7 @@ namespace GenericJumpAndRun
             _heroTexture = Content.Load<Texture2D>("hero");
             _heroTexture.Name = "hero";
 
-            LoadLevel("customlevel.txt");
+            LoadLevel("level1.txt");
 
         }
         private void LoadLevel(string levelname)
@@ -244,6 +244,13 @@ namespace GenericJumpAndRun
                 var temp =
                     _currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
 
+                while(temp.Count() > 1)
+                {
+                    _currentLevel.GameObjects.Remove(temp.First());
+                    block = temp.First();
+                    temp =
+                    _currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
+                }
                 if (temp.Count() == 1)
                     block = temp.First();
 
