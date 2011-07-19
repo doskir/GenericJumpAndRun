@@ -36,7 +36,7 @@ namespace GenericJumpAndRun
             if (mob.Type == this.Type)
                 return;
             //collision with enemy detected
-            if(mob.Position.Y < Position.Y - Height /2)
+            if(mob.Position.Y < Position.Y + Height /2)
             {
                 //enemy is above, cant kill
                 return;
