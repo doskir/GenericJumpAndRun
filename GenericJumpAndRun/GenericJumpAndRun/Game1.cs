@@ -320,25 +320,25 @@ namespace GenericJumpAndRun
                 if (newKeyboardState.IsKeyDown(Keys.Left))
                 {
                     Vector2 newPos = _player.Position;
-                    newPos.X -= 2;
+                    newPos.X -= 10;
                     _player.Position = newPos;
                 }
                 else if (newKeyboardState.IsKeyDown(Keys.Right))
                 {
                     Vector2 newPos = _player.Position;
-                    newPos.X += 2;
+                    newPos.X += 10;
                     _player.Position = newPos;
                 }
                 if (newKeyboardState.IsKeyDown(Keys.Up))
                 {
                     Vector2 newPos = _player.Position;
-                    newPos.Y -= 2;
+                    newPos.Y -= 10;
                     _player.Position = newPos;
                 }
                 if (newKeyboardState.IsKeyDown(Keys.Down))
                 {
                     Vector2 newPos = _player.Position;
-                    newPos.Y += 2;
+                    newPos.Y += 10;
                     _player.Position = newPos;
                 }
             }
