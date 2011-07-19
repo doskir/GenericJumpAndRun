@@ -56,6 +56,8 @@ namespace GenericJumpAndRun
             logWindow.AddMessage(
                 "RightClick to spawn or remove an enemy, their spawnpoint will be added to the level file");
             logWindow.AddMessage("the start and finish points have to be moved manually by editing the level file");
+            logWindow.AddMessage(
+                "Press L to save the current level to the file \"customlevel.txt\" and start a new round with it");
             RandomDebugFunctionToBeRemoved();
 
         }
@@ -223,6 +225,11 @@ namespace GenericJumpAndRun
             {
                 LoadLevel(currentLevel.Name);
                 return;
+            }
+            if(_oldKeyboardState.IsKeyUp(Keys.T) && newKeyboardState.IsKeyDown(Keys.T))
+            {
+                currentLevel.SaveLevelToFile("customlevel.txt");
+                LoadLevel("customlevel.txt");
             }
             if (form.Focused && newMouseState.LeftButton == ButtonState.Pressed || newMouseState.RightButton == ButtonState.Pressed)
             {

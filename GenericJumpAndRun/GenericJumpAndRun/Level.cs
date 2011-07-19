@@ -41,5 +41,12 @@ namespace GenericJumpAndRun
             }
             return sb.ToString();
         }
+        public void SaveLevelToFile(string filename)
+        {
+            using(StreamWriter sw = new StreamWriter(filename))
+            {
+                sw.Write(this.ToLevelString());
+            }
+        }
     }
 }
