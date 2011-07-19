@@ -23,6 +23,7 @@ namespace GenericJumpAndRun
 
         //the sprites will be 32x32
         //the screen will be 20 tiles wide and 15 tiles high
+        private Texture2D _backgroundTexture;
         private Texture2D _heroTexture;
         private Texture2D _enemyTexture;
         private Texture2D _startZoneTexture;
@@ -147,6 +148,9 @@ namespace GenericJumpAndRun
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _spriteFont = Content.Load<SpriteFont>("SpriteFont1");
+
+            _backgroundTexture = Content.Load<Texture2D>("Background");
+
 
             _blocks.Add(Content.Load<Texture2D>("borderblock"));
             _blocks.Last().Name = "borderblock";
@@ -382,6 +386,7 @@ namespace GenericJumpAndRun
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
+            spriteBatch.Draw(_backgroundTexture, Vector2.Zero, Color.White);
             foreach (GameObject gobj in _currentLevel.GameObjects)
             {
                 if (_camera.Visible(gobj))
