@@ -58,6 +58,7 @@ namespace GenericJumpAndRun
             _logWindow.AddMessage("the start and finish points have to be moved manually by editing the level file");
             _logWindow.AddMessage(
                 "Press L to save the current level to the file \"customlevel.txt\" and start a new round with it");
+            _logWindow.AddMessage("Press E to load an empty level");
             RandomDebugFunctionToBeRemoved();
         }
         public void RandomDebugFunctionToBeRemoved()
@@ -82,12 +83,7 @@ namespace GenericJumpAndRun
         }
         void LoadEmptyLevel()
         {
-            Level level = new Level();
-            level.StartZone = new GameObject(new Vector2(0, 416), Vector2.Zero, _startZoneTexture,
-                                             GameObject.ObjectType.StartZone);
-            level.FinishZone = new GameObject(new Vector2(64, 416), Vector2.Zero, _finishZoneTexture,
-                                              GameObject.ObjectType.FinishZone);
-            _currentLevel = level;
+            LoadLevel("");
         }
         public void NextLevel()
         {
@@ -208,11 +204,26 @@ namespace GenericJumpAndRun
         }
         private void LoadLevel(string levelname)
         {
-            _currentLevel = LoadLevelFromFile(levelname);
+            if (levelname == "")
+            {
+                _logWindow.AddMessage("No levelname passed, loading empty level and enabling noclip");
+                Level level = new Level();
+                level.StartZone = new GameObject(new Vector2(0, 416), Vector2.Zero, _startZoneTexture,
+                                                 GameObject.ObjectType.StartZone);
+                level.FinishZone = new GameObject(new Vector2(64, 416), Vector2.Zero, _finishZoneTexture,
+                                                  GameObject.ObjectType.FinishZone);
+                _currentLevel = level;
+                _noclip = true;
+                _camera.LockToPlayingArea = !_noclip;
+            }
+            else
+            {
+                _currentLevel = LoadLevelFromFile(levelname);
+            }
             _currentLevel.Name = levelname;
 
-            _player = new Player(_currentLevel.StartZone.Position, new Vector2(0, 5), _heroTexture);
 
+            _player = new Player(_currentLevel.StartZone.Position, new Vector2(0, 5), _heroTexture);
             _currentLevel.GameObjects.Add(_player);
             _camera.LockToObject(_player);
         }
@@ -266,6 +277,10 @@ namespace GenericJumpAndRun
             {
                 _currentLevel.SaveLevelToFile("customlevel.txt");
                 LoadLevel("customlevel.txt");
+            }
+            if(_oldKeyboardState.IsKeyUp(Keys.E) &&  newKeyboardState.IsKeyDown(Keys.E))
+            {
+                LoadEmptyLevel();
             }
 
             #region MouseInputInDeBugMode
