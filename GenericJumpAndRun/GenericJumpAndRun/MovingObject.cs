@@ -28,14 +28,14 @@ namespace GenericJumpAndRun
                     Position += new Vector2(Velocity.X, 0);
                 else
                     Position += Velocity;
-                Velocity.X *= 0.9f;
-                //going up
+                Velocity.X *= 0.90f;
                 if (Velocity.Y < 0)
-                    Velocity.Y *= 0.9f;
+                    Velocity.Y *= 0.90f;
+
                 if (IntersectsWithAny(currentLevel.GameObjects))
                 {
                     Position = _lastPosition;
-                    Velocity = Vector2.Zero;
+                    Velocity = new Vector2(0, Velocity.Y);
                 }
                 Fall(currentLevel);
             }
@@ -43,7 +43,6 @@ namespace GenericJumpAndRun
             {
                 if (Position.Y < -5000)
                     Velocity = Vector2.Zero;
-                Position += Velocity;
             }
         }
         public void Move(Direction movementDirection)
@@ -62,7 +61,7 @@ namespace GenericJumpAndRun
             {
                 //gravity
                 Vector2 originalPosition = Position;
-                Velocity.Y += 0.2f;
+                Velocity.Y += 0.5f;
                 Vector2 verticalVelocity = new Vector2(0, Velocity.Y);
                 Position += verticalVelocity;
                 if (IntersectsWithAny(level.GameObjects))
