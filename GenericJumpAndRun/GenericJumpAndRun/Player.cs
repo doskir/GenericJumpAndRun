@@ -28,7 +28,7 @@ namespace GenericJumpAndRun
         public override void DetectEnemyHit(MovingObject mob)
         {
             //collision with enemy detected
-            if (Position.Y < mob.Position.Y - mob.Height /2)
+            if (Position.Y < mob.Position.Y - mob.Height / 10)
             {
                 //hit enemy from above
                 mob.Die();
