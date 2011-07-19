@@ -68,7 +68,7 @@ namespace GenericJumpAndRun
             {
                 //gravity
                 Vector2 originalPosition = Position;
-                Velocity.Y += 0.5f;
+                Velocity.Y += 0.3f;
                 var verticalVelocity = new Vector2(0, Velocity.Y);
                 Position += verticalVelocity;
                 if (IntersectsWithAny(level.GameObjects))
