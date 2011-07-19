@@ -24,7 +24,7 @@ namespace GenericJumpAndRun
         }
         public override void ReachedBottom()
         {
-            Velocity.Y = 0;
+            base.ReachedBottom();
             CanJump = true;
         }
         public override void DetectEnemyHit(MovingObject mob)

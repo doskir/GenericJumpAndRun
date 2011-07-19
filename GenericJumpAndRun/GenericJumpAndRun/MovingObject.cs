@@ -22,7 +22,6 @@ namespace GenericJumpAndRun
         {
             if (Alive)
             {
-
                 Vector2 _lastPosition = Position;
                 if (Velocity.Y > 0)
                     Position += new Vector2(Velocity.X, 0);
@@ -39,11 +38,17 @@ namespace GenericJumpAndRun
                     HitWall();
                 }
                 Fall(currentLevel);
+                if(Position.Y > 800)
+                {
+                    //below visible screen
+                    Die();
+                }
             }
             else
             {
                 if (Position.Y < -5000)
                     Velocity = Vector2.Zero;
+                Position += Velocity;
             }
         }
         public virtual void HitWall()
@@ -81,7 +86,7 @@ namespace GenericJumpAndRun
         {
             Velocity.Y = 0;
         }
-        public virtual void Die()
+        public void Die()
         {
             if(Alive)
             {
