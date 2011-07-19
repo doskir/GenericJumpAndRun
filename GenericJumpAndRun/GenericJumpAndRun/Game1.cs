@@ -34,6 +34,8 @@ namespace GenericJumpAndRun
         private Camera _camera;
         private readonly List<Texture2D> _blocks = new List<Texture2D>();
         private readonly Form _form;
+        private int _lastScore;
+        private int _totalScore;
         public Game1()
         {
            
@@ -235,6 +237,7 @@ namespace GenericJumpAndRun
                 _currentLevel.SaveLevelToFile("customlevel.txt");
                 LoadLevel("customlevel.txt");
             }
+            #region MouseInputInDeBugMode
             if (_form.Focused && newMouseState.LeftButton == ButtonState.Pressed || newMouseState.RightButton == ButtonState.Pressed)
             {
                 int mousePositionX = (int) (newMouseState.X + _camera.Position.X);
@@ -311,7 +314,7 @@ namespace GenericJumpAndRun
                 }
             }
             _oldMouseState = newMouseState;
-
+            #endregion
             if (_noclip)
             {
                 if (newKeyboardState.IsKeyDown(Keys.Left))
@@ -363,6 +366,8 @@ namespace GenericJumpAndRun
                     if (_player.HasFinished(_currentLevel))
                     {
                         _currentLevel.Finished = true;
+                        _lastScore = _lastScore + _player.Score;
+                        _player.Score = 0;
                     }
                 }
 
@@ -371,6 +376,7 @@ namespace GenericJumpAndRun
             }
 #endif
             _camera.Update();
+            _totalScore = _lastScore + _player.Score;
 
             _oldKeyboardState = newKeyboardState;
 
@@ -396,20 +402,25 @@ namespace GenericJumpAndRun
                     spriteBatch.Draw(gobj.Sprite, actualPosition, Color.White);
                 }
             }
+            var screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
             if(_currentLevel.Finished)
             {
                 const string text = "YOU WIN!";
                 Vector2 textSize = _spriteFont.MeasureString(text);
-                var screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
                 spriteBatch.DrawString(_spriteFont, text, screenCenter - textSize/2, Color.Black);
             }
             if(!_player.Alive)
             {
                 string text = "You died" + Environment.NewLine + "Press R to restart.";
                 Vector2 textSize = _spriteFont.MeasureString(text);
-                var screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
                 spriteBatch.DrawString(_spriteFont, text, screenCenter - textSize/2, Color.Black);
             }
+            //draw score
+            string scoreString = _totalScore.ToString();
+            Vector2 scoreTextSize = _spriteFont.MeasureString(scoreString);
+            Vector2 scorePosition = new Vector2(GraphicsDevice.Viewport.Width, 50) - scoreTextSize;
+            spriteBatch.DrawString(_spriteFont, scoreString, scorePosition, Color.Black);
+
 
             Vector2 startPosition = _currentLevel.StartZone.Position - _camera.Position;
             Vector2 finishPosition = _currentLevel.FinishZone.Position - _camera.Position;

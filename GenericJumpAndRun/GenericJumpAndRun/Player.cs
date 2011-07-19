@@ -9,6 +9,8 @@ namespace GenericJumpAndRun
         {
             
         }
+
+        public int Score;
         public bool CanJump = true;
         public void Jump()
         {
@@ -30,6 +32,7 @@ namespace GenericJumpAndRun
             {
                 //hit enemy from above
                 mob.Die();
+                Score += 100;
                 //bounce off of enemy
                 CanJump = true;
                 Jump();
