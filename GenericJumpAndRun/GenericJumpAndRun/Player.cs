@@ -44,7 +44,7 @@ namespace GenericJumpAndRun
         }
         public void Move(Direction movementDirection)
         {
-            base.Move(movementDirection, 0.5f);
+            base.Move(movementDirection, 1.0f);
         }
         public bool HasFinished(Level currentLevel)
         {

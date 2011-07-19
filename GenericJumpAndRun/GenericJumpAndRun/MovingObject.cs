@@ -24,7 +24,7 @@ namespace GenericJumpAndRun
                     Position += new Vector2(Velocity.X, 0);
                 else
                     Position += Velocity;
-                Velocity.X *= 0.90f;
+                Velocity.X *= 0.75f;
                 if (Velocity.Y < 0)
                     Velocity.Y *= 0.90f;
 
