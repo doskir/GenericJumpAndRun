@@ -59,16 +59,6 @@ namespace GenericJumpAndRun
             _logWindow.AddMessage(
                 "Press L to save the current level to the file \"customlevel.txt\" and start a new round with it");
             _logWindow.AddMessage("Press E to load an empty level");
-            RandomDebugFunctionToBeRemoved();
-        }
-        public void RandomDebugFunctionToBeRemoved()
-        {
-            var sb = new StringBuilder();
-            for (int y = 0; y <= 512; y+=32)
-            {
-                sb.AppendLine("-32," + y + ",borderblock");
-            }
-
 #endif
         }
         public List<string> FindAvailableLevels()
@@ -80,10 +70,6 @@ namespace GenericJumpAndRun
             }
             levels.Sort();
             return levels;
-        }
-        void LoadEmptyLevel()
-        {
-            LoadLevel("");
         }
         public void NextLevel()
         {
@@ -204,6 +190,7 @@ namespace GenericJumpAndRun
         }
         private void LoadLevel(string levelname)
         {
+#if DEBUG
             if (levelname == "")
             {
                 _logWindow.AddMessage("No levelname passed, loading empty level and enabling noclip");
@@ -217,11 +204,10 @@ namespace GenericJumpAndRun
                 _camera.LockToPlayingArea = !_noclip;
             }
             else
-            {
+#endif
                 _currentLevel = LoadLevelFromFile(levelname);
-            }
+            
             _currentLevel.Name = levelname;
-
 
             _player = new Player(_currentLevel.StartZone.Position, new Vector2(0, 5), _heroTexture);
             _currentLevel.GameObjects.Add(_player);
@@ -280,7 +266,7 @@ namespace GenericJumpAndRun
             }
             if(_oldKeyboardState.IsKeyUp(Keys.E) &&  newKeyboardState.IsKeyDown(Keys.E))
             {
-                LoadEmptyLevel();
+                LoadLevel("");
             }
 
             #region MouseInputInDeBugMode
