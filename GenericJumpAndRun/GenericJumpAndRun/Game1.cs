@@ -36,9 +36,10 @@ namespace GenericJumpAndRun
         private readonly Form _form;
         private int _lastScore;
         private int _totalScore;
+        private List<string> _availableLevels = new List<string>();
+        private int _currentLevelIndex = -1;
         public Game1()
         {
-           
             graphics = new GraphicsDeviceManager(this);
             _form = (Form) Control.FromHandle(Window.Handle);
             graphics.PreferredBackBufferWidth = 640;
@@ -58,7 +59,6 @@ namespace GenericJumpAndRun
             _logWindow.AddMessage(
                 "Press L to save the current level to the file \"customlevel.txt\" and start a new round with it");
             RandomDebugFunctionToBeRemoved();
-
         }
         public void RandomDebugFunctionToBeRemoved()
         {
@@ -69,6 +69,28 @@ namespace GenericJumpAndRun
             }
 
 #endif
+        }
+        public List<string> FindAvailableLevels()
+        {
+            List<string> levels = new List<string>();
+            foreach (string file in System.IO.Directory.GetFiles("Levels\\"))
+            {
+                levels.Add(file);
+            }
+            levels.Sort();
+            return levels;
+        }
+        public void NextLevel()
+        {
+            _currentLevelIndex++;
+            if(_currentLevelIndex >= _availableLevels.Count())
+            {
+                //no more levels
+                MessageBox.Show("Congratulations! You finished the game!");
+                Exit();
+                return;
+            }
+            LoadLevel(_availableLevels[_currentLevelIndex]);
         }
 
         internal Level LoadLevelFromFile(string filename)
@@ -172,8 +194,8 @@ namespace GenericJumpAndRun
             _heroTexture = Content.Load<Texture2D>("hero");
             _heroTexture.Name = "hero";
 
-            LoadLevel("level1.txt");
-
+            _availableLevels = FindAvailableLevels();
+            NextLevel();
         }
         private void LoadLevel(string levelname)
         {
@@ -221,7 +243,7 @@ namespace GenericJumpAndRun
             }
 
 #if DEBUG
-                        MouseState newMouseState = Mouse.GetState();
+            MouseState newMouseState = Mouse.GetState();
             if (_oldKeyboardState.IsKeyUp(Keys.P) && newKeyboardState.IsKeyDown(Keys.P))
             {
                 _logWindow.AddMessage(_currentLevel.ToLevelString());
@@ -232,13 +254,16 @@ namespace GenericJumpAndRun
                 _camera.LockToPlayingArea = !_noclip;
                 _currentLevel.Playing = !_noclip;
             }
-            if(_oldKeyboardState.IsKeyUp(Keys.L) && newKeyboardState.IsKeyDown(Keys.L))
+            if (_oldKeyboardState.IsKeyUp(Keys.L) && newKeyboardState.IsKeyDown(Keys.L))
             {
                 _currentLevel.SaveLevelToFile("customlevel.txt");
                 LoadLevel("customlevel.txt");
             }
+
             #region MouseInputInDeBugMode
-            if (_form.Focused && newMouseState.LeftButton == ButtonState.Pressed || newMouseState.RightButton == ButtonState.Pressed)
+
+            if (_form.Focused && newMouseState.LeftButton == ButtonState.Pressed
+                || newMouseState.RightButton == ButtonState.Pressed)
             {
                 int mousePositionX = (int) (newMouseState.X + _camera.Position.X);
                 int mousePositionY = (int) (newMouseState.Y + _camera.Position.Y);
@@ -248,16 +273,16 @@ namespace GenericJumpAndRun
                     x -= 32;
                 GameObject block = null;
                 var boundingRectangle = new BoundingRectangle(mousePositionX - 1, mousePositionY - 1,
-                                                                            2, 2);
+                                                              2, 2);
                 var temp =
                     _currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
 
-                while(temp.Count() > 1)
+                while (temp.Count() > 1)
                 {
                     _currentLevel.GameObjects.Remove(temp.First());
                     block = temp.First();
                     temp =
-                    _currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
+                        _currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
                 }
                 if (temp.Count() == 1)
                     block = temp.First();
@@ -314,7 +339,9 @@ namespace GenericJumpAndRun
                 }
             }
             _oldMouseState = newMouseState;
+
             #endregion
+
             if (_noclip)
             {
                 if (newKeyboardState.IsKeyDown(Keys.Left))
@@ -344,34 +371,40 @@ namespace GenericJumpAndRun
             }
             else
             {
-#endif
-            if (_currentLevel.Playing)
+#endif          
+                if (newKeyboardState.IsKeyDown(Keys.Left))
                 {
-                    if (newKeyboardState.IsKeyDown(Keys.Left))
+                    _player.Move(MovingObject.Direction.Left);
+                }
+                else if (newKeyboardState.IsKeyDown(Keys.Right))
+                {
+                    _player.Move(MovingObject.Direction.Right);
+                }
+                if (newKeyboardState.IsKeyDown(Keys.Up))
+                {
+                    _player.Jump();
+                }
+                foreach (GameObject gobj in _currentLevel.GameObjects)
+                {
+                    gobj.Update(_currentLevel);
+                }
+                if (_currentLevel.Finished)
+                {
+                    if (DateTime.Now >= _currentLevel.LevelFinishTime.AddSeconds(3))
                     {
-                        _player.Move(MovingObject.Direction.Left);
+                        NextLevel();
                     }
-                    else if (newKeyboardState.IsKeyDown(Keys.Right))
-                    {
-                        _player.Move(MovingObject.Direction.Right);
-                    }
-                    if (newKeyboardState.IsKeyDown(Keys.Up))
-                    {
-                        _player.Jump();
-                    }
-                    foreach (GameObject gobj in _currentLevel.GameObjects)
-                    {
-                        gobj.Update(_currentLevel);
-                    }
+                }
+                else
+                {
                     if (_player.HasFinished(_currentLevel))
                     {
                         _currentLevel.Finished = true;
+                        _currentLevel.LevelFinishTime = DateTime.Now;
                         _lastScore = _lastScore + _player.Score;
                         _player.Score = 0;
                     }
                 }
-
-
 #if DEBUG
             }
 #endif

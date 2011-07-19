@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -12,10 +13,10 @@ namespace GenericJumpAndRun
         public GameObject FinishZone;
         public bool Finished;
         public bool Playing;
+        public DateTime LevelFinishTime;
         public Level()
         {
             GameObjects = new List<GameObject>();
-            Playing = true;
         }
         public string ToLevelString()
         {
