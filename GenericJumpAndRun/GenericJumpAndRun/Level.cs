@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace GenericJumpAndRun
 {
@@ -24,7 +19,7 @@ namespace GenericJumpAndRun
         }
         public string ToLevelString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine(StartZone.BoundingRectangle.X + "," + StartZone.BoundingRectangle.Y + ","
                           + StartZone.Sprite.Name);
             sb.AppendLine(FinishZone.BoundingRectangle.X + "," + FinishZone.BoundingRectangle.Y + ","
@@ -35,7 +30,7 @@ namespace GenericJumpAndRun
                     sb.AppendLine(gobj.BoundingRectangle.X + "," + gobj.BoundingRectangle.Y + "," + gobj.Sprite.Name);
                 if(gobj.Type == GameObject.ObjectType.Enemy)
                 {
-                    Enemy enemy = (Enemy) gobj;
+                    var enemy = (Enemy) gobj;
                     sb.AppendLine(enemy.SpawnLocation.X + "," + enemy.SpawnLocation.Y + "," + enemy.Sprite.Name);
                 }
             }
@@ -43,9 +38,9 @@ namespace GenericJumpAndRun
         }
         public void SaveLevelToFile(string filename)
         {
-            using(StreamWriter sw = new StreamWriter(filename))
+            using(var sw = new StreamWriter(filename))
             {
-                sw.Write(this.ToLevelString());
+                sw.Write(ToLevelString());
             }
         }
     }

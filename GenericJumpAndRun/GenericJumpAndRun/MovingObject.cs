@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -22,7 +19,7 @@ namespace GenericJumpAndRun
         {
             if (Alive)
             {
-                Vector2 _lastPosition = Position;
+                Vector2 lastPosition = Position;
                 if (Velocity.Y > 0)
                     Position += new Vector2(Velocity.X, 0);
                 else
@@ -33,7 +30,7 @@ namespace GenericJumpAndRun
 
                 if (IntersectsWithAny(currentLevel.GameObjects))
                 {
-                    Position = _lastPosition;
+                    Position = lastPosition;
                     Velocity = new Vector2(0, Velocity.Y);
                     HitWall();
                 }
@@ -72,7 +69,7 @@ namespace GenericJumpAndRun
                 //gravity
                 Vector2 originalPosition = Position;
                 Velocity.Y += 0.5f;
-                Vector2 verticalVelocity = new Vector2(0, Velocity.Y);
+                var verticalVelocity = new Vector2(0, Velocity.Y);
                 Position += verticalVelocity;
                 if (IntersectsWithAny(level.GameObjects))
                 {
@@ -109,7 +106,7 @@ namespace GenericJumpAndRun
                     {
                         if (Type == ObjectType.Enemy && gobj.Type == ObjectType.Enemy)
                             return true;
-                        MovingObject mob = (MovingObject) gobj;
+                        var mob = (MovingObject) gobj;
                         if (mob.Alive)
                         {
                             DetectEnemyHit(mob);

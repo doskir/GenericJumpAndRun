@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace GenericJumpAndRun
@@ -25,11 +21,9 @@ namespace GenericJumpAndRun
         }
         public override void HitWall()
         {
-            if (MovementDirection == Direction.Left)
-                MovementDirection = Direction.Right;
-            else
-                MovementDirection = Direction.Left;
+            MovementDirection = MovementDirection == Direction.Left ? Direction.Right : Direction.Left;
         }
+
         public override void DetectEnemyHit(MovingObject mob)
         {
             //dont kill friends

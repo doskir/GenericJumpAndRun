@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace GenericJumpAndRun
@@ -18,7 +14,7 @@ namespace GenericJumpAndRun
         private Viewport _viewport;
         private GameObject _focusObject;
         private CameraMode _mode;
-        private BoundingRectangle _boundingRectangle;
+        private readonly BoundingRectangle _boundingRectangle;
         public bool LockToPlayingArea = true;
         public Camera(int x, int y, int width, int height)
         {

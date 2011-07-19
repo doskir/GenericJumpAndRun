@@ -5,12 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 
@@ -27,43 +23,43 @@ namespace GenericJumpAndRun
 
         //the sprites will be 32x32
         //the screen will be 20 tiles wide and 15 tiles high
-        private Texture2D heroTexture;
-        private Texture2D enemyTexture;
-        private Texture2D startZoneTexture;
-        private Texture2D finishZoneTexture;
-        private SpriteFont spriteFont;
-        private Level currentLevel;
-        private Player player;
-        private Camera camera;
-        private List<Texture2D> blocks = new List<Texture2D>();
-        private Form form;
+        private Texture2D _heroTexture;
+        private Texture2D _enemyTexture;
+        private Texture2D _startZoneTexture;
+        private Texture2D _finishZoneTexture;
+        private SpriteFont _spriteFont;
+        private Level _currentLevel;
+        private Player _player;
+        private Camera _camera;
+        private readonly List<Texture2D> _blocks = new List<Texture2D>();
+        private readonly Form _form;
         public Game1()
         {
            
             graphics = new GraphicsDeviceManager(this);
-            form = (Form) Control.FromHandle(Window.Handle);
+            _form = (Form) Control.FromHandle(Window.Handle);
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
             Content.RootDirectory = "Content";
 #if DEBUG
-            this.IsMouseVisible = true;
-            logWindow = new LogWindow();
-            logWindow.Show();
-            logWindow.AddMessage("Press P to print the current level");
-            logWindow.AddMessage("Press N to enable noclip,flying and pause");
-            logWindow.AddMessage("Press R to reload the level");
-            logWindow.AddMessage("LeftClick to cycle through the available blocks");
-            logWindow.AddMessage(
+            IsMouseVisible = true;
+            _logWindow = new LogWindow();
+            _logWindow.Show();
+            _logWindow.AddMessage("Press P to print the current level");
+            _logWindow.AddMessage("Press N to enable noclip,flying and pause");
+            _logWindow.AddMessage("Press R to reload the level");
+            _logWindow.AddMessage("LeftClick to cycle through the available blocks");
+            _logWindow.AddMessage(
                 "RightClick to spawn or remove an enemy, their spawnpoint will be added to the level file");
-            logWindow.AddMessage("the start and finish points have to be moved manually by editing the level file");
-            logWindow.AddMessage(
+            _logWindow.AddMessage("the start and finish points have to be moved manually by editing the level file");
+            _logWindow.AddMessage(
                 "Press L to save the current level to the file \"customlevel.txt\" and start a new round with it");
             RandomDebugFunctionToBeRemoved();
 
         }
         public void RandomDebugFunctionToBeRemoved()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (int y = 0; y <= 512; y+=32)
             {
                 sb.AppendLine("-32," + y + ",borderblock");
@@ -74,46 +70,49 @@ namespace GenericJumpAndRun
 
         internal Level LoadLevelFromFile(string filename)
         {
-            Level level = new Level();
-            using(StreamReader sr = new StreamReader(filename))
+            var level = new Level();
+            using(var sr = new StreamReader(filename))
             {
                 while (!sr.EndOfStream)
                 {
                     string s = sr.ReadLine();
-                    if (s.StartsWith("//") || s == "")
+                    if (s != null && (s.StartsWith("//") || s == ""))
                         continue;
-                    string[] split = s.Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
-                    if (split[2] == "startzone")
+                    if (s != null)
                     {
-                        Texture2D sprite = startZoneTexture;
-                        GameObject startZone = new GameObject(
-                            new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero, sprite,
-                            GameObject.ObjectType.StartZone);
-                        level.StartZone = startZone;
-                    }
-                    else if (split[2] == "finishzone")
-                    {
-                        Texture2D sprite = finishZoneTexture;
-                        GameObject finishZone = new GameObject(
-                            new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero, sprite,
-                            GameObject.ObjectType.FinishZone);
-                        level.FinishZone = finishZone;
-                    }
-                    else if(split[2] == "enemy")
-                    {
-                        Texture2D sprite = enemyTexture;
-                        Enemy enemy = new Enemy(new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero,
-                                                sprite);
-                        level.GameObjects.Add(enemy);
-                    }
-                    else
-                    {
-                        Texture2D sprite = Content.Load<Texture2D>(split[2]);
-                        sprite.Name = split[2];
-                        GameObject gameObject = new GameObject(
-                            new Vector2(float.Parse(split[0]), float.Parse(split[1])),
-                            new Vector2(0, 0), sprite, GameObject.ObjectType.Block);
-                        level.GameObjects.Add(gameObject);
+                        string[] split = s.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+                        if (split[2] == "startzone")
+                        {
+                            Texture2D sprite = _startZoneTexture;
+                            var startZone = new GameObject(
+                                new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero, sprite,
+                                GameObject.ObjectType.StartZone);
+                            level.StartZone = startZone;
+                        }
+                        else if (split[2] == "finishzone")
+                        {
+                            Texture2D sprite = _finishZoneTexture;
+                            var finishZone = new GameObject(
+                                new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero, sprite,
+                                GameObject.ObjectType.FinishZone);
+                            level.FinishZone = finishZone;
+                        }
+                        else if(split[2] == "enemy")
+                        {
+                            Texture2D sprite = _enemyTexture;
+                            var enemy = new Enemy(new Vector2(float.Parse(split[0]), float.Parse(split[1])), Vector2.Zero,
+                                                    sprite);
+                            level.GameObjects.Add(enemy);
+                        }
+                        else
+                        {
+                            var sprite = Content.Load<Texture2D>(split[2]);
+                            sprite.Name = split[2];
+                            var gameObject = new GameObject(
+                                new Vector2(float.Parse(split[0]), float.Parse(split[1])),
+                                new Vector2(0, 0), sprite, GameObject.ObjectType.Block);
+                            level.GameObjects.Add(gameObject);
+                        }
                     }
                 }
             }
@@ -132,7 +131,7 @@ namespace GenericJumpAndRun
         /// </summary>
         protected override void Initialize()
         {
-            camera = new Camera(0, 0, 640, 480);
+            _camera = new Camera(0, 0, 640, 480);
 
             base.Initialize();
         }
@@ -147,38 +146,38 @@ namespace GenericJumpAndRun
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            spriteFont = Content.Load<SpriteFont>("SpriteFont1");
+            _spriteFont = Content.Load<SpriteFont>("SpriteFont1");
 
-            blocks.Add(Content.Load<Texture2D>("borderblock"));
-            blocks.Last().Name = "borderblock";
-            blocks.Add(Content.Load<Texture2D>("dirt"));
-            blocks.Last().Name = "dirt";
-            blocks.Add(Content.Load<Texture2D>("stoneblock"));
-            blocks.Last().Name = "stoneblock";
+            _blocks.Add(Content.Load<Texture2D>("borderblock"));
+            _blocks.Last().Name = "borderblock";
+            _blocks.Add(Content.Load<Texture2D>("dirt"));
+            _blocks.Last().Name = "dirt";
+            _blocks.Add(Content.Load<Texture2D>("stoneblock"));
+            _blocks.Last().Name = "stoneblock";
 
-            startZoneTexture = Content.Load<Texture2D>("startzone");
-            startZoneTexture.Name = "startzone";
-            finishZoneTexture = Content.Load<Texture2D>("finishzone");
-            finishZoneTexture.Name = "finishzone";
+            _startZoneTexture = Content.Load<Texture2D>("startzone");
+            _startZoneTexture.Name = "startzone";
+            _finishZoneTexture = Content.Load<Texture2D>("finishzone");
+            _finishZoneTexture.Name = "finishzone";
 
-            enemyTexture = Content.Load<Texture2D>("enemy");
-            enemyTexture.Name = "enemy";
+            _enemyTexture = Content.Load<Texture2D>("enemy");
+            _enemyTexture.Name = "enemy";
 
-            heroTexture = Content.Load<Texture2D>("hero");
-            heroTexture.Name = "hero";
+            _heroTexture = Content.Load<Texture2D>("hero");
+            _heroTexture.Name = "hero";
 
             LoadLevel("level.txt");
 
         }
         private void LoadLevel(string levelname)
         {
-            currentLevel = LoadLevelFromFile(levelname);
-            currentLevel.Name = levelname;
+            _currentLevel = LoadLevelFromFile(levelname);
+            _currentLevel.Name = levelname;
 
-            player = new Player(currentLevel.StartZone.Position, new Vector2(0, 5), heroTexture);
+            _player = new Player(_currentLevel.StartZone.Position, new Vector2(0, 5), _heroTexture);
 
-            currentLevel.GameObjects.Add(player);
-            camera.LockToObject(player);
+            _currentLevel.GameObjects.Add(_player);
+            _camera.LockToObject(_player);
         }
 
         /// <summary>
@@ -193,8 +192,8 @@ namespace GenericJumpAndRun
         private KeyboardState _oldKeyboardState = Keyboard.GetState();
         private MouseState _oldMouseState = Mouse.GetState();
 #if DEBUG
-        private LogWindow logWindow;
-        private bool noclip;
+        private readonly LogWindow _logWindow;
+        private bool _noclip;
 #endif
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -205,7 +204,7 @@ namespace GenericJumpAndRun
         {
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+                Exit();
 
             KeyboardState newKeyboardState = Keyboard.GetState();
             MouseState newMouseState = Mouse.GetState();
@@ -213,37 +212,37 @@ namespace GenericJumpAndRun
 #if DEBUG
             if (_oldKeyboardState.IsKeyUp(Keys.P) && newKeyboardState.IsKeyDown(Keys.P))
             {
-                logWindow.AddMessage(currentLevel.ToLevelString());
+                _logWindow.AddMessage(_currentLevel.ToLevelString());
             }
             if (_oldKeyboardState.IsKeyUp(Keys.N) && newKeyboardState.IsKeyDown(Keys.N))
             {
-                noclip = !noclip;
-                camera.LockToPlayingArea = !noclip;
-                currentLevel.Playing = !noclip;
+                _noclip = !_noclip;
+                _camera.LockToPlayingArea = !_noclip;
+                _currentLevel.Playing = !_noclip;
             }
             if (_oldKeyboardState.IsKeyUp(Keys.R) && newKeyboardState.IsKeyDown(Keys.R))
             {
-                LoadLevel(currentLevel.Name);
+                LoadLevel(_currentLevel.Name);
                 return;
             }
             if(_oldKeyboardState.IsKeyUp(Keys.L) && newKeyboardState.IsKeyDown(Keys.L))
             {
-                currentLevel.SaveLevelToFile("customlevel.txt");
+                _currentLevel.SaveLevelToFile("customlevel.txt");
                 LoadLevel("customlevel.txt");
             }
-            if (form.Focused && newMouseState.LeftButton == ButtonState.Pressed || newMouseState.RightButton == ButtonState.Pressed)
+            if (_form.Focused && newMouseState.LeftButton == ButtonState.Pressed || newMouseState.RightButton == ButtonState.Pressed)
             {
-                int mousePositionX = (int) (newMouseState.X + camera.Position.X);
-                int mousePositionY = (int) (newMouseState.Y + camera.Position.Y);
+                int mousePositionX = (int) (newMouseState.X + _camera.Position.X);
+                int mousePositionY = (int) (newMouseState.Y + _camera.Position.Y);
                 int x = (mousePositionX)/32*32;
                 int y = (mousePositionY)/32*32;
                 if (mousePositionX <= 0)
                     x -= 32;
                 GameObject block = null;
-                BoundingRectangle boundingRectangle = new BoundingRectangle(mousePositionX - 1, mousePositionY - 1,
+                var boundingRectangle = new BoundingRectangle(mousePositionX - 1, mousePositionY - 1,
                                                                             2, 2);
                 var temp =
-                    currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
+                    _currentLevel.GameObjects.Where(gobj => gobj.BoundingRectangle.IntersectsWith(boundingRectangle));
 
                 if (temp.Count() == 1)
                     block = temp.First();
@@ -252,21 +251,21 @@ namespace GenericJumpAndRun
                 {
                     if (block != null)
                     {
-                        int nextBlockIndex = blocks.IndexOf(block.Sprite) + 1;
-                        if (nextBlockIndex >= blocks.Count())
+                        int nextBlockIndex = _blocks.IndexOf(block.Sprite) + 1;
+                        if (nextBlockIndex >= _blocks.Count())
                         {
-                            currentLevel.GameObjects.Remove(block);
+                            _currentLevel.GameObjects.Remove(block);
                         }
                         else
                         {
-                            block.Sprite = blocks[nextBlockIndex];
+                            block.Sprite = _blocks[nextBlockIndex];
                         }
                     }
                     else
                     {
-                        block = new GameObject(new Vector2(x, y), Vector2.Zero, blocks[0],
+                        block = new GameObject(new Vector2(x, y), Vector2.Zero, _blocks[0],
                                                GameObject.ObjectType.Block);
-                        currentLevel.GameObjects.Add(block);
+                        _currentLevel.GameObjects.Add(block);
                     }
                 }
                 if (newMouseState.RightButton == ButtonState.Pressed
@@ -274,13 +273,13 @@ namespace GenericJumpAndRun
                 {
                     if (block == null)
                     {
-                        Enemy newEnemy = new Enemy(new Vector2(x, y), Vector2.Zero, enemyTexture);
+                        var newEnemy = new Enemy(new Vector2(x, y), Vector2.Zero, _enemyTexture);
                         bool emptyPosition = true;
-                        foreach (GameObject gobj in currentLevel.GameObjects)
+                        foreach (GameObject gobj in _currentLevel.GameObjects)
                         {
                             if (gobj.Type == GameObject.ObjectType.Enemy)
                             {
-                                Enemy existingEnemy = (Enemy) gobj;
+                                var existingEnemy = (Enemy) gobj;
                                 if (existingEnemy.SpawnLocation == newEnemy.SpawnLocation)
                                 {
                                     emptyPosition = false;
@@ -288,12 +287,12 @@ namespace GenericJumpAndRun
                             }
                         }
                         if (emptyPosition)
-                            currentLevel.GameObjects.Add(newEnemy);
+                            _currentLevel.GameObjects.Add(newEnemy);
                     }
                     else
                     {
                         if (block.Type == GameObject.ObjectType.Enemy)
-                            currentLevel.GameObjects.Remove(block);
+                            _currentLevel.GameObjects.Remove(block);
 
 
                     }
@@ -301,57 +300,57 @@ namespace GenericJumpAndRun
             }
             _oldMouseState = newMouseState;
 
-            if (noclip)
+            if (_noclip)
             {
                 if (newKeyboardState.IsKeyDown(Keys.Left))
                 {
-                    Vector2 newPos = player.Position;
+                    Vector2 newPos = _player.Position;
                     newPos.X -= 2;
-                    player.Position = newPos;
+                    _player.Position = newPos;
                 }
                 else if (newKeyboardState.IsKeyDown(Keys.Right))
                 {
-                    Vector2 newPos = player.Position;
+                    Vector2 newPos = _player.Position;
                     newPos.X += 2;
-                    player.Position = newPos;
+                    _player.Position = newPos;
                 }
                 if (newKeyboardState.IsKeyDown(Keys.Up))
                 {
-                    Vector2 newPos = player.Position;
+                    Vector2 newPos = _player.Position;
                     newPos.Y -= 2;
-                    player.Position = newPos;
+                    _player.Position = newPos;
                 }
                 if (newKeyboardState.IsKeyDown(Keys.Down))
                 {
-                    Vector2 newPos = player.Position;
+                    Vector2 newPos = _player.Position;
                     newPos.Y += 2;
-                    player.Position = newPos;
+                    _player.Position = newPos;
                 }
             }
             else
             {
 #endif
-                if (currentLevel.Playing)
+                if (_currentLevel.Playing)
                 {
                     if (newKeyboardState.IsKeyDown(Keys.Left))
                     {
-                        player.Move(Player.Direction.Left);
+                        _player.Move(MovingObject.Direction.Left);
                     }
                     else if (newKeyboardState.IsKeyDown(Keys.Right))
                     {
-                        player.Move(Player.Direction.Right);
+                        _player.Move(MovingObject.Direction.Right);
                     }
                     if (newKeyboardState.IsKeyDown(Keys.Up))
                     {
-                        player.Jump();
+                        _player.Jump();
                     }
-                    foreach (GameObject gobj in currentLevel.GameObjects)
+                    foreach (GameObject gobj in _currentLevel.GameObjects)
                     {
-                        gobj.Update(currentLevel);
+                        gobj.Update(_currentLevel);
                     }
-                    if (player.HasFinished(currentLevel))
+                    if (_player.HasFinished(_currentLevel))
                     {
-                        currentLevel.Finished = true;
+                        _currentLevel.Finished = true;
                     }
                 }
 
@@ -359,7 +358,7 @@ namespace GenericJumpAndRun
 #if DEBUG
             }
 #endif
-            camera.Update();
+            _camera.Update();
 
             _oldKeyboardState = newKeyboardState;
 
@@ -374,37 +373,35 @@ namespace GenericJumpAndRun
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            Vector2 minPosition = player.Position -camera.Position - new  Vector2(500, 500);
-            Vector2 maxPosition = player.Position -camera.Position + new Vector2(500, 500);
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-            foreach (GameObject gobj in currentLevel.GameObjects)
+            foreach (GameObject gobj in _currentLevel.GameObjects)
             {
-                if (camera.Visible(gobj))
+                if (_camera.Visible(gobj))
                 {
-                    Vector2 actualPosition = gobj.Position - camera.Position;
+                    Vector2 actualPosition = gobj.Position - _camera.Position;
                     spriteBatch.Draw(gobj.Sprite, actualPosition, Color.White);
                 }
             }
-            if(currentLevel.Finished)
+            if(_currentLevel.Finished)
             {
-                string text = "YOU WIN!";
-                Vector2 textSize = spriteFont.MeasureString(text);
-                Vector2 screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
-                spriteBatch.DrawString(spriteFont, text, screenCenter - textSize/2, Color.Black);
+                const string text = "YOU WIN!";
+                Vector2 textSize = _spriteFont.MeasureString(text);
+                var screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
+                spriteBatch.DrawString(_spriteFont, text, screenCenter - textSize/2, Color.Black);
             }
-            if(!player.Alive)
+            if(!_player.Alive)
             {
                 string text = "You died" + Environment.NewLine + "Press R to restart.";
-                Vector2 textSize = spriteFont.MeasureString(text);
-                Vector2 screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
-                spriteBatch.DrawString(spriteFont, text, screenCenter - textSize/2, Color.Black);
+                Vector2 textSize = _spriteFont.MeasureString(text);
+                var screenCenter = new Vector2(GraphicsDevice.Viewport.Width/2, 100);
+                spriteBatch.DrawString(_spriteFont, text, screenCenter - textSize/2, Color.Black);
             }
 #if DEBUG
-            Vector2 startPosition = currentLevel.StartZone.Position - camera.Position;
-            Vector2 finishPosition = currentLevel.FinishZone.Position - camera.Position;
-            spriteBatch.Draw(currentLevel.StartZone.Sprite, startPosition, Color.White);
-            spriteBatch.Draw(currentLevel.FinishZone.Sprite, finishPosition, Color.White);
+            Vector2 startPosition = _currentLevel.StartZone.Position - _camera.Position;
+            Vector2 finishPosition = _currentLevel.FinishZone.Position - _camera.Position;
+            spriteBatch.Draw(_currentLevel.StartZone.Sprite, startPosition, Color.White);
+            spriteBatch.Draw(_currentLevel.FinishZone.Sprite, finishPosition, Color.White);
 #endif
             spriteBatch.End();
             base.Draw(gameTime);

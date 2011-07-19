@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -20,6 +18,7 @@ namespace GenericJumpAndRun
         public Vector2 Position
         {
             get { return _position; }
+
             set
             {
                 _position = value;
@@ -60,15 +59,9 @@ namespace GenericJumpAndRun
         }
         public virtual bool IntersectsWithAny(List<GameObject> gameObjects)
         {
-            foreach(GameObject gobj in gameObjects)
-            {
-                if (gobj == this)
-                    continue;
-                if (IntersectsWith(gobj))
-                    return true;
-            }
-            return false;
+            return gameObjects.Where(gobj => gobj != this).Any(IntersectsWith);
         }
+
         public virtual void Update(Level currentLevel)
         {
             
