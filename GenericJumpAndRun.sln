@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericJumpAndRun", "GenericJumpAndRun\GenericJumpAndRun\GenericJumpAndRun.csproj", "{F2B25036-B669-4FE8-B875-F718F94DC20B}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "GenericJumpAndRunContent", "GenericJumpAndRun\GenericJumpAndRunContent\GenericJumpAndRunContent.contentproj", "{CD58392B-FE39-44A4-A5E4-ADD713B3F769}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericJumpAndRunContent", "GenericJumpAndRun\GenericJumpAndRunContent\GenericJumpAndRunContent.contentproj", "{CD58392B-FE39-44A4-A5E4-ADD713B3F769}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C5C43FFD-E055-4300-871E-2022838CF81C}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
