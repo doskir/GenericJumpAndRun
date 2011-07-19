@@ -226,7 +226,7 @@ namespace GenericJumpAndRun
                 LoadLevel(currentLevel.Name);
                 return;
             }
-            if(_oldKeyboardState.IsKeyUp(Keys.T) && newKeyboardState.IsKeyDown(Keys.T))
+            if(_oldKeyboardState.IsKeyUp(Keys.L) && newKeyboardState.IsKeyDown(Keys.L))
             {
                 currentLevel.SaveLevelToFile("customlevel.txt");
                 LoadLevel("customlevel.txt");
