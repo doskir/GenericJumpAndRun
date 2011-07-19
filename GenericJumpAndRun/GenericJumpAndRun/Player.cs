@@ -43,6 +43,10 @@ namespace GenericJumpAndRun
                 Die();
             }
         }
+        public void Move(Direction movementDirection)
+        {
+            base.Move(movementDirection, 0.5f);
+        }
         public bool HasFinished(Level currentLevel)
         {
             if (IntersectsWith(currentLevel.FinishZone))

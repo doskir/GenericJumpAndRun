@@ -9,7 +9,7 @@ namespace GenericJumpAndRun
 {
     class Enemy : MovingObject
     {
-        public Direction movementDirection;
+        public Direction MovementDirection;
         public Point SpawnLocation;
         public Enemy(Vector2 position, Vector2 velocity, Texture2D sprite) : base(position, velocity, sprite, ObjectType.Enemy)
         {
@@ -19,33 +19,16 @@ namespace GenericJumpAndRun
         {
             if (Alive)
             {
-                Move(movementDirection);
-                Vector2 _lastPosition = Position;
-                if (Velocity.Y > 0)
-                    Position += new Vector2(Velocity.X, 0);
-                else
-                    Position += Velocity;
-                Velocity.X *= 0.9f;
-                //going up
-                if (Velocity.Y < 0)
-                    Velocity.Y *= 0.9f;
-                if (IntersectsWithAny(currentLevel.GameObjects))
-                {
-                    Position = _lastPosition;
-                    Velocity = Vector2.Zero;
-                    if (movementDirection == Direction.Left)
-                        movementDirection = Direction.Right;
-                    else
-                        movementDirection = Direction.Left;
-                }
-                Fall(currentLevel);
+                Move(MovementDirection, 0.1f);
             }
+            base.Update(currentLevel);
+        }
+        public override void HitWall()
+        {
+            if (MovementDirection == Direction.Left)
+                MovementDirection = Direction.Right;
             else
-            {
-                if (Position.Y < -5000)
-                    Velocity = Vector2.Zero;
-                Position += Velocity;
-            }
+                MovementDirection = Direction.Left;
         }
         public override void DetectEnemyHit(MovingObject mob)
         {

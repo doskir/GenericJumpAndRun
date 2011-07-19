@@ -13,7 +13,6 @@ namespace GenericJumpAndRun
         {
             Left, Right
         }
-
         public bool Alive;
         protected MovingObject(Vector2 position, Vector2 velocity, Texture2D sprite, ObjectType objectType) : base(position, velocity, sprite, objectType)
         {
@@ -23,6 +22,7 @@ namespace GenericJumpAndRun
         {
             if (Alive)
             {
+
                 Vector2 _lastPosition = Position;
                 if (Velocity.Y > 0)
                     Position += new Vector2(Velocity.X, 0);
@@ -36,6 +36,7 @@ namespace GenericJumpAndRun
                 {
                     Position = _lastPosition;
                     Velocity = new Vector2(0, Velocity.Y);
+                    HitWall();
                 }
                 Fall(currentLevel);
             }
@@ -45,14 +46,18 @@ namespace GenericJumpAndRun
                     Velocity = Vector2.Zero;
             }
         }
-        public void Move(Direction movementDirection)
+        public virtual void HitWall()
+        {
+
+        }
+        public virtual void Move(Direction movementDirection,float speed)
         {
             if (Alive)
             {
                 if (movementDirection == Direction.Left)
-                    Velocity.X -= 0.5f;
+                    Velocity.X -= speed;
                 else if (movementDirection == Direction.Right)
-                    Velocity.X += 0.5f;
+                    Velocity.X += speed;
             }
         }
         public void Fall(Level level)
