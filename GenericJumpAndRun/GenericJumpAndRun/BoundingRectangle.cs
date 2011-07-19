@@ -9,6 +9,12 @@ namespace GenericJumpAndRun
     class BoundingRectangle
     {
         private Rectangle _rectangle;
+
+        public Rectangle Rectangle
+        {
+            get { return _rectangle; }
+        }
+
         public int X
         {
             get { return _rectangle.X; }
