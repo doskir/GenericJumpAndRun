@@ -94,6 +94,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="hero.png">
       <Name>hero</Name>
       <Importer>TextureImporter</Importer>
