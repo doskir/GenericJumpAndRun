@@ -166,7 +166,7 @@ namespace GenericJumpAndRun
             _heroTexture = Content.Load<Texture2D>("hero");
             _heroTexture.Name = "hero";
 
-            LoadLevel("level.txt");
+            LoadLevel("customlevel.txt");
 
         }
         private void LoadLevel(string levelname)
